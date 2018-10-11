@@ -19,5 +19,8 @@ def apply(bpmn_graph, parameters=None):
     """
     if parameters is None:
         parameters = {}
-    file_name = bpmn_diagram_to_figure(bpmn_graph, "pdf")
+
+    format = parameters["format"] if "format" in parameters else "png"
+
+    file_name = bpmn_diagram_to_figure(bpmn_graph, format)
     return file_name
