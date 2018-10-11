@@ -13,6 +13,7 @@ RUN pip install dataclasses
 RUN pip install cvxopt
 RUN pip install flask
 RUN pip install flask-cors
+RUN pip install networkx==1.11 bpmn_python==0.0.18
 
 COPY . /app
 
