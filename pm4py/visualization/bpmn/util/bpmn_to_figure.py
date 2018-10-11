@@ -4,6 +4,9 @@ import pydotplus
 import bpmn_python.bpmn_python_consts as consts
 import tempfile
 
+EXCLUSIVE_OPERATOR = ""
+PARALLEL_OPERATOR = "+"
+
 def bpmn_diagram_to_figure(bpmn_graph, format):
     """
     Render a BPMN graph into a figure of the given format
@@ -26,7 +29,9 @@ def bpmn_diagram_to_figure(bpmn_graph, format):
         if node[1].get(consts.Consts.type) == consts.Consts.task:
             n = pydotplus.Node(name=node[0], shape="box", style="rounded", label=node[1].get(consts.Consts.node_name))
         elif node[1].get(consts.Consts.type) == consts.Consts.exclusive_gateway:
-            n = pydotplus.Node(name=node[0], shape="diamond", label=node[1].get(consts.Consts.node_name))
+            n = pydotplus.Node(name=node[0], shape="diamond", label=EXCLUSIVE_OPERATOR)
+        elif node[1].get(consts.Consts.type) == consts.Consts.parallel_gateway:
+            n = pydotplus.Node(name=node[0], shape="diamond", label=PARALLEL_OPERATOR)
         else:
             n = pydotplus.Node(name=node[0], label=node[1].get(consts.Consts.node_name))
         graph.add_node(n)
