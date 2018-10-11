@@ -210,7 +210,6 @@ def apply(net, initial_marking, final_marking, parameters=None):
         [arc.source for arc in trans.in_arcs][0] in initial_marking and not [arc.target for arc in trans.out_arcs][
                                                                                 0] in final_marking:
             pass
-
         else:
             if not trans in mapped_trans:
                 if trans.label is None:
@@ -228,40 +227,73 @@ def apply(net, initial_marking, final_marking, parameters=None):
                 else:
                     mapped_trans[trans] = bpmn_transitions_map[trans]
 
+    for trans in net.transitions:
+        if len(trans.in_arcs) == 1 and len(trans.out_arcs) == 1 and trans.label is None and not \
+                [arc.source for arc in trans.in_arcs][0] in initial_marking and not [arc.target for arc in trans.out_arcs][0] in final_marking:
+            pass
+        else:
             if trans in mapped_trans:
                 for arc in trans.in_arcs:
                     if not arc in mapped_arcs:
                         place = arc.source
-                        if not place in mapped_places:
-                            gateway_name_inplace = place.name
-                            gateway_id_inplace = place.name
-                            [gateway_inplace, _] = bpmn_graph.add_exclusive_gateway_to_diagram(process_id,
-                                                                                               gateway_name=gateway_name_inplace,
-                                                                                               node_id=gateway_id_inplace)
-                            mapped_places[place] = gateway_inplace
 
-                        sequence_flow_id, inplace_flow = bpmn_graph.add_sequence_flow_to_diagram(process_id,
-                                                                                                 mapped_places[place],
-                                                                                                 mapped_trans[trans])
-                        mapped_arcs[arc] = inplace_flow
-                        elements_correspondence[arc] = inplace_flow
+                        if not place in mapped_places and len(place.in_arcs) == 1 and len(place.out_arcs) == 1 and list(place.in_arcs)[0].source in mapped_trans:
+                            in_arc_0 = list(place.in_arcs)[0]
+                            in_trans = in_arc_0.source
+
+                            if not mapped_trans[in_trans] == mapped_trans[trans]:
+                                sequence_flow_id, inplace_flow = bpmn_graph.add_sequence_flow_to_diagram(process_id,
+                                                                                                         mapped_trans[in_trans],
+                                                                                                         mapped_trans[trans])
+                                mapped_arcs[arc] = inplace_flow
+                                elements_correspondence[arc] = inplace_flow
+                            mapped_places[place] = mapped_trans[in_trans]
+                        else:
+                            if not place in mapped_places:
+                                gateway_name_inplace = place.name
+                                gateway_id_inplace = place.name
+                                [gateway_inplace, _] = bpmn_graph.add_exclusive_gateway_to_diagram(process_id,
+                                                                                                   gateway_name=gateway_name_inplace,
+                                                                                                   node_id=gateway_id_inplace)
+                                mapped_places[place] = gateway_inplace
+
+                            if not mapped_places[place] == mapped_trans[trans]:
+                                sequence_flow_id, inplace_flow = bpmn_graph.add_sequence_flow_to_diagram(process_id,
+                                                                                                         mapped_places[place],
+                                                                                                         mapped_trans[trans])
+                                mapped_arcs[arc] = inplace_flow
+                                elements_correspondence[arc] = inplace_flow
 
                 for arc in trans.out_arcs:
                     if not arc in mapped_arcs:
                         place = arc.target
-                        if not place in mapped_places:
-                            gateway_name_outplace = place.name
-                            gateway_id_outplace = place.name
-                            [gateway_outplace, _] = bpmn_graph.add_exclusive_gateway_to_diagram(process_id,
-                                                                                                gateway_name=gateway_name_outplace,
-                                                                                                node_id=gateway_id_outplace)
-                            mapped_places[place] = gateway_outplace
 
-                        sequence_flow_id, outplace_flow = bpmn_graph.add_sequence_flow_to_diagram(process_id,
-                                                                                                  mapped_trans[trans],
-                                                                                                  mapped_places[place])
-                        mapped_arcs[arc] = outplace_flow
-                        elements_correspondence[arc] = outplace_flow
+                        if not place in mapped_places and len(place.in_arcs) == 1 and len(place.out_arcs) == 1 and list(place.out_arcs)[0].target in mapped_trans:
+                            out_arc_0 = list(place.out_arcs)[0]
+                            out_trans = out_arc_0.target
+
+                            if not mapped_trans[trans] == mapped_trans[out_trans]:
+                                sequence_flow_id, outplace_flow = bpmn_graph.add_sequence_flow_to_diagram(process_id,
+                                                                                                          mapped_trans[trans],
+                                                                                                          mapped_trans[out_trans])
+                                mapped_arcs[out_arc_0] = outplace_flow
+                                elements_correspondence[out_arc_0] = outplace_flow
+                                mapped_places[place] = mapped_trans[out_trans]
+                        else:
+                            if not place in mapped_places:
+                                gateway_name_outplace = place.name
+                                gateway_id_outplace = place.name
+                                [gateway_outplace, _] = bpmn_graph.add_exclusive_gateway_to_diagram(process_id,
+                                                                                                    gateway_name=gateway_name_outplace,
+                                                                                                    node_id=gateway_id_outplace)
+                                mapped_places[place] = gateway_outplace
+
+                            if not mapped_trans[trans] == mapped_places[place]:
+                                sequence_flow_id, outplace_flow = bpmn_graph.add_sequence_flow_to_diagram(process_id,
+                                                                                                          mapped_trans[trans],
+                                                                                                          mapped_places[place])
+                                mapped_arcs[arc] = outplace_flow
+                                elements_correspondence[arc] = outplace_flow
 
     for trans in net.transitions:
         if len(trans.in_arcs) == 1 and len(trans.out_arcs) == 1 and trans.label is None and not \
