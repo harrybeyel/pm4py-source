@@ -3,6 +3,7 @@ import networkx as nx
 import pydotplus
 import bpmn_python.bpmn_python_consts as consts
 import tempfile
+from pm4py.objects.conversion.bpmn_to_petri.util import constants
 
 EXCLUSIVE_OPERATOR = ""
 PARALLEL_OPERATOR = "+"
@@ -36,7 +37,10 @@ def bpmn_diagram_to_figure(bpmn_graph, format):
             n = pydotplus.Node(name=node[0], label=node[1].get(consts.Consts.node_name))
         graph.add_node(n)
     for edge in g.edges(data=True):
-        e = pydotplus.Edge(src=edge[0], dst=edge[1], label=edge[2].get(consts.Consts.name))
+        if edge[0] == constants.END_EVENT_ID:
+            e = pydotplus.Edge(src=edge[1], dst=edge[0], label=edge[2].get(consts.Consts.name))
+        else:
+            e = pydotplus.Edge(src=edge[0], dst=edge[1], label=edge[2].get(consts.Consts.name))
         graph.add_edge(e)
     file_name = tempfile.NamedTemporaryFile(suffix='.'+format)
     file_name.close()
