@@ -169,7 +169,23 @@ def apply(net, initial_marking, final_marking, parameters=None):
                 out_arc = arc
                 out_trans = arc.target
 
-            if len(in_trans.out_arcs) == 1:
+            if (len(in_trans.out_arcs) > 1 and len(out_trans.in_arcs) == 1):
+                if not in_trans in mapped_trans:
+                    gateway_name_split = in_trans.name
+                    gateway_id_split = in_trans.name
+                    [gateway_split, _] = bpmn_graph.add_parallel_gateway_to_diagram(process_id,
+                                                                                    gateway_name=gateway_name_split,
+                                                                                    node_id=gateway_id_split)
+                    mapped_trans[in_trans] = gateway_split
+            elif (len(out_trans.in_arcs) > 1 and len(in_trans.out_arcs) == 1):
+                if not out_trans in mapped_trans:
+                    gateway_name_join = out_trans.name
+                    gateway_id_join = out_trans.name
+                    [gateway_join, _] = bpmn_graph.add_parallel_gateway_to_diagram(process_id,
+                                                                                         gateway_name=gateway_name_join,
+                                                                                         node_id=gateway_id_join)
+                    mapped_trans[out_trans] = gateway_join
+            elif len(in_trans.out_arcs) == 1 and len(out_trans.in_arcs) == 1:
                 # sequential place between two activities, convert it into direct arc :)
                 flow = None
                 if in_trans.label is not None and out_trans.label is not None:
@@ -200,9 +216,14 @@ def apply(net, initial_marking, final_marking, parameters=None):
                 if trans.label is None:
                     gateway_name = trans.name
                     gateway_id_principal = trans.name
-                    [gateway_principal, _] = bpmn_graph.add_exclusive_gateway_to_diagram(process_id,
-                                                                                         gateway_name=gateway_name,
-                                                                                         node_id=gateway_id_principal)
+                    if (len(trans.in_arcs) == 1 and len(trans.out_arcs) > 1) or (len(trans.out_arcs) == 1 and len(trans.in_arcs) > 1):
+                        [gateway_principal, _] = bpmn_graph.add_parallel_gateway_to_diagram(process_id,
+                                                                                             gateway_name=gateway_name,
+                                                                                             node_id=gateway_id_principal)
+                    else:
+                        [gateway_principal, _] = bpmn_graph.add_exclusive_gateway_to_diagram(process_id,
+                                                                                             gateway_name=gateway_name,
+                                                                                             node_id=gateway_id_principal)
                     mapped_trans[trans] = gateway_principal
                 else:
                     mapped_trans[trans] = bpmn_transitions_map[trans]
@@ -255,5 +276,6 @@ def apply(net, initial_marking, final_marking, parameters=None):
                 sequence_flow_id, place_flow = bpmn_graph.add_sequence_flow_to_diagram(process_id,
                                                                                          mapped_places[place_source],
                                                                                          mapped_places[place_target])
+                mapped_arcs[arc_source] = place_flow
 
     return bpmn_graph, elements_correspondence
