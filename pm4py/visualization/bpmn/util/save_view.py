@@ -10,6 +10,13 @@ def view(bpmn_figure):
     bpmn_figure
         BPMN figure
     """
+    try:
+        filename = bpmn_figure.name
+        bpmn_figure = filename
+    except:
+        # continue without problems, a proper path has been provided
+        pass
+
     is_ipynb = False
 
     try:
