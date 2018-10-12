@@ -356,8 +356,8 @@ def apply(net, initial_marking, final_marking, parameters=None):
                                                                                          mapped_places[place_source],
                                                                                          mapped_places[place_target])
                 mapped_arcs[arc_source] = place_flow
-                elements_correspondence[arc_source] = place_flow
-                elements_correspondence[arc_target] = place_flow
+                #elements_correspondence[arc_source] = place_flow
+                #elements_correspondence[arc_target] = place_flow
 
     inv_elements_correspondence = {}
     for el in elements_correspondence.keys():

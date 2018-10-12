@@ -32,7 +32,13 @@ def bpmn_diagram_to_figure(bpmn_graph, format, bpmn_aggreg_statistics=None):
     for node in g.nodes(data=True):
         node_name = node[1]['node_name']
         if node[1].get(consts.Consts.type) == consts.Consts.task:
-            n = pydotplus.Node(name=node[0], shape="box", style="rounded", label=node[1].get(consts.Consts.node_name))
+            if str(node[1]) in bpmn_aggreg_statistics:
+                node_statistics = bpmn_aggreg_statistics[str(node[1])]
+                n = pydotplus.Node(name=node[0], shape="box", style="filled",
+                                   label=node_statistics['label'], fillcolor=node_statistics['color'])
+            else:
+                n = pydotplus.Node(name=node[0], shape="box", style="rounded",
+                                   label=node[1].get(consts.Consts.node_name))
         elif node[1].get(consts.Consts.type) == consts.Consts.exclusive_gateway:
             n = pydotplus.Node(name=node[0], shape="diamond", label=EXCLUSIVE_OPERATOR)
         elif node[1].get(consts.Consts.type) == consts.Consts.parallel_gateway:
@@ -43,7 +49,6 @@ def bpmn_diagram_to_figure(bpmn_graph, format, bpmn_aggreg_statistics=None):
     for edge in g.edges(data=True):
         edge_source = edge[2]['sourceRef']
         edge_target = edge[2]['targetRef']
-
 
         if str(edge[2]) in bpmn_aggreg_statistics:
             edge_statistics = bpmn_aggreg_statistics[str(edge[2])]
