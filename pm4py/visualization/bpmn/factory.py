@@ -12,7 +12,7 @@ VERSIONS = {WO_DECORATION: wo_decoration.apply, FREQUENCY_DECORATION: frequency.
             PERFORMANCE_GREEDY: performance.apply}
 
 VERSIONS_PETRI = {WO_DECORATION: wo_decoration.apply_petri, FREQUENCY_DECORATION: frequency.apply_petri, PERFORMANCE_DECORATION: performance.apply_petri,
-                  FREQUENCY_GREEDY: wo_decoration.apply_petri, PERFORMANCE_GREEDY: wo_decoration.apply_petri}
+                  FREQUENCY_GREEDY: frequency.apply_petri_greedy, PERFORMANCE_GREEDY: performance.apply_petri_greedy}
 
 def apply(bpmn_graph, bpmn_aggreg_statistics=None, parameters=None, variant="wo_decoration"):
     """
@@ -55,8 +55,8 @@ def apply_petri(net, initial_marking, final_marking, log=None, aggregated_statis
         Possible parameters of the algorithm, including:
             format -> Format of the image to render (pdf, png, svg)
             aggregationMeasure -> Measure to use to aggregate statistics
-            pmutil.constants.PARAMETER_CONSTANT_ACTIVITY_KEY -> Specification of the activity key (if not concept:name)
-            pmutil.constants.PARAMETER_CONSTANT_TIMESTAMP_KEY -> Specification of the timestamp key (if not time:timestamp)
+            pm4py.util.constants.PARAMETER_CONSTANT_ACTIVITY_KEY -> Specification of the activity key (if not concept:name)
+            pm4py.util.constants.PARAMETER_CONSTANT_TIMESTAMP_KEY -> Specification of the timestamp key (if not time:timestamp)
 
     Returns
     -----------
