@@ -1,7 +1,7 @@
 import bpmn_python.bpmn_diagram_rep as diagram
 import uuid
 from pm4py.objects.conversion.bpmn_to_petri.util import constants
-
+from pm4py.objects.petri.petrinet import PetriNet
 
 def get_start_trans_petri_given_imarking(initial_marking):
     """
@@ -98,6 +98,46 @@ def get_final_trans_petri_given_fmarking(final_marking):
 
     return final_trans, final_involved_places, final_involved_arcs, final_involved_trans
 
+def get_petri_el_type(petri_el):
+    """
+    Gets the type (in string) of the current Petri net element
+
+    Parameters
+    -----------
+    petri_el
+        Petri net element
+
+    Returns
+    -----------
+    type
+        Type (string) of the BPMN graph element
+    """
+
+    if type(petri_el) is PetriNet.Transition:
+        return "transition"
+    elif type(petri_el) is PetriNet.Place:
+        return "place"
+    return "arc"
+
+def get_bpmn_el_type(el):
+    """
+    Gets the type (in string) of the current BPMN element
+
+    Parameters
+    ----------
+    el
+        BPMN graph element
+
+    Returns
+    ----------
+    type
+        Type (string) of the BPMN graph element
+    """
+    if 'type' in el:
+        return "task"
+    elif 'sourceRef' in el and 'targetRef' in el:
+        return "arc"
+    return "other"
 
 def apply(net, initial_marking, final_marking, parameters=None):
     """
@@ -321,11 +361,15 @@ def apply(net, initial_marking, final_marking, parameters=None):
 
     inv_elements_correspondence = {}
     for el in elements_correspondence.keys():
-        corresp_el = str(elements_correspondence[el])
-        if not corresp_el in inv_elements_correspondence:
-            inv_elements_correspondence[corresp_el] = []
-        if not el in inv_elements_correspondence[corresp_el]:
-            inv_elements_correspondence[corresp_el].append(el)
+        petri_el_type = get_petri_el_type(el)
+        el_type = get_bpmn_el_type(elements_correspondence[el])
+
+        if (petri_el_type == "transition" and el_type == "task") or (petri_el_type == "arc" and el_type == "arc"):
+            corresp_el = str(elements_correspondence[el])
+            if not corresp_el in inv_elements_correspondence:
+                inv_elements_correspondence[corresp_el] = []
+            if not el in inv_elements_correspondence[corresp_el]:
+                inv_elements_correspondence[corresp_el].append(el)
 
     el_corr_keys_map = {}
     for el in elements_correspondence:

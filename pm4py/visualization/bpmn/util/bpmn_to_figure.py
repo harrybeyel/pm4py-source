@@ -8,7 +8,7 @@ from pm4py.objects.conversion.bpmn_to_petri.util import constants
 EXCLUSIVE_OPERATOR = ""
 PARALLEL_OPERATOR = "+"
 
-def bpmn_diagram_to_figure(bpmn_graph, format):
+def bpmn_diagram_to_figure(bpmn_graph, format, bpmn_aggreg_statistics=None):
     """
     Render a BPMN graph into a figure of the given format
 
@@ -24,6 +24,9 @@ def bpmn_diagram_to_figure(bpmn_graph, format):
     file_name
         Path of the file containing the render
     """
+    if bpmn_aggreg_statistics is None:
+        bpmn_aggreg_statistics = {}
+
     g = bpmn_graph.diagram_graph
     graph = pydotplus.Dot()
     for node in g.nodes(data=True):
@@ -41,13 +44,14 @@ def bpmn_diagram_to_figure(bpmn_graph, format):
         edge_source = edge[2]['sourceRef']
         edge_target = edge[2]['targetRef']
 
-        """print(edge)
-        if edge[0] == constants.END_EVENT_ID:
-            e = pydotplus.Edge(src=edge[1], dst=edge[0], label=edge[2].get(consts.Consts.name))
+
+        if str(edge[2]) in bpmn_aggreg_statistics:
+            edge_statistics = bpmn_aggreg_statistics[str(edge[2])]
+            e = pydotplus.Edge(src=edge_source, dst=edge_target, label=edge_statistics['label'], penwidth=edge_statistics['penwidth'])
+            graph.add_edge(e)
         else:
-            e = pydotplus.Edge(src=edge[0], dst=edge[1], label=edge[2].get(consts.Consts.name))"""
-        e = pydotplus.Edge(src=edge_source, dst=edge_target, label=edge[2].get(consts.Consts.name))
-        graph.add_edge(e)
+            e = pydotplus.Edge(src=edge_source, dst=edge_target, label=edge[2].get(consts.Consts.name))
+            graph.add_edge(e)
     file_name = tempfile.NamedTemporaryFile(suffix='.'+format)
     file_name.close()
     graph.write(file_name.name, format=format)
