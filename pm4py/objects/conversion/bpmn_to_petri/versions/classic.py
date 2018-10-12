@@ -118,8 +118,12 @@ def apply(net, initial_marking, final_marking, parameters=None):
     -----------
     bpmn_graph
         BPMN graph
-    edges_correspondence
-        Correspondence between meaningful edges of the Petri net and meaningful edges of the BPMN graph
+    elements_correspondence
+        Correspondence between meaningful elements of the Petri net (objects) and meaningful elements of the BPMN graph (dicts)
+    inv_elements_correspondence
+        Correspondence between meaningful elements of the BPMN graph (dicts) and meaningful elements of the Petri net (objects)
+    el_corr_keys_map
+        Correspondence between string-ed keys of elements_correspondence with the corresponding elements
     """
     if parameters is None:
         parameters = {}
@@ -202,6 +206,7 @@ def apply(net, initial_marking, final_marking, parameters=None):
                     mapped_arcs[in_arc] = flow
                     mapped_arcs[out_arc] = flow
 
+                    elements_correspondence[in_arc] = flow
                     elements_correspondence[out_arc] = flow
 
     # add remaining elements of the Petri net as happen in a Petri net
@@ -247,6 +252,7 @@ def apply(net, initial_marking, final_marking, parameters=None):
                                                                                                          mapped_trans[trans])
                                 mapped_arcs[arc] = inplace_flow
                                 elements_correspondence[arc] = inplace_flow
+                                elements_correspondence[in_arc_0] = inplace_flow
                             mapped_places[place] = mapped_trans[in_trans]
                         else:
                             if not place in mapped_places:
@@ -278,6 +284,7 @@ def apply(net, initial_marking, final_marking, parameters=None):
                                                                                                           mapped_trans[out_trans])
                                 mapped_arcs[out_arc_0] = outplace_flow
                                 elements_correspondence[out_arc_0] = outplace_flow
+                                elements_correspondence[arc] = outplace_flow
                                 mapped_places[place] = mapped_trans[out_trans]
                         else:
                             if not place in mapped_places:
@@ -309,5 +316,19 @@ def apply(net, initial_marking, final_marking, parameters=None):
                                                                                          mapped_places[place_source],
                                                                                          mapped_places[place_target])
                 mapped_arcs[arc_source] = place_flow
+                elements_correspondence[arc_source] = place_flow
+                elements_correspondence[arc_target] = place_flow
 
-    return bpmn_graph, elements_correspondence
+    inv_elements_correspondence = {}
+    for el in elements_correspondence.keys():
+        corresp_el = str(elements_correspondence[el])
+        if not corresp_el in inv_elements_correspondence:
+            inv_elements_correspondence[corresp_el] = []
+        if not el in inv_elements_correspondence[corresp_el]:
+            inv_elements_correspondence[corresp_el].append(el)
+
+    el_corr_keys_map = {}
+    for el in elements_correspondence:
+        el_corr_keys_map[str(el)] = el
+
+    return bpmn_graph, elements_correspondence, inv_elements_correspondence, el_corr_keys_map

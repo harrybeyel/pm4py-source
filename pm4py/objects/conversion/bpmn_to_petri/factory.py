@@ -23,7 +23,11 @@ def apply(net, initial_marking, final_marking, parameters=None, variant="classic
     -----------
     bpmn_graph
         BPMN graph
-    edges_correspondence
-        Correspondence between meaningful edges of the Petri net and meaningful edges of the BPMN graph
+    elements_correspondence
+        Correspondence between meaningful elements of the Petri net and meaningful elements of the BPMN graph
+    inv_elements_correspondence
+        Correspondence between meaningful elements of the BPMN graph and meaningful elements of the Petri net
+    el_corr_keys_map
+        Correspondence between string-ed keys of elements_correspondence with the corresponding elements
     """
     return VERSIONS[variant](net, initial_marking, final_marking, parameters=parameters)
