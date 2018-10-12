@@ -31,7 +31,7 @@ max_no_cases = 1000
 enable_filtering_df = True
 filtering_df_noise = 0.01
 
-
+"""
 SEP = ","
 QUOTECHAR = None
 inputLog = os.path.join("C:\\road_traffic.csv")
@@ -45,7 +45,7 @@ enable_filtering_on_activities=False
 enable_filtering_on_cases=False
 enable_filtering_df=True
 filtering_df_noise=0.01
-
+"""
 
 
 def execute_script():
