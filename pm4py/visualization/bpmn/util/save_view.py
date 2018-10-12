@@ -47,4 +47,11 @@ def save(bpmn_figure, output_file_path):
     output_file_path
         Path where the figure should be saved
     """
+    try:
+        filename = bpmn_figure.name
+        bpmn_figure = filename
+    except:
+        # continue without problems, a proper path has been provided
+        pass
+
     shutil.copyfile(bpmn_figure, output_file_path)
