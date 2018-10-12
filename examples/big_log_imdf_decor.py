@@ -9,6 +9,7 @@ from pm4py.visualization.petrinet.util import vis_trans_shortest_paths
 from pm4py.algo.filtering.tracelog.attributes import attributes_filter
 from pm4py.algo.discovery.dfg import factory as dfg_factory
 from pm4py.visualization.petrinet import factory as pn_vis_factory
+from pm4py.visualization.bpmn import factory as bpmn_vis_factory
 
 
 def execute_script():
@@ -45,6 +46,11 @@ def execute_script():
     pn_vis_factory.view(gviz)
     # we save the vis to file
     # pn_vis_factory.save(gviz, "receipt.pnml")
+
+    # we can show also the BPMN diagram
+    bpmn = bpmn_vis_factory.apply_petri(net, initial_marking, final_marking, variant=variant, aggregated_statistics=aggregated_statistics,
+                                        parameters={"format": "svg"})
+    bpmn_vis_factory.view(bpmn)
 
 
 if __name__ == "__main__":

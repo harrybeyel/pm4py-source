@@ -7,6 +7,7 @@ from pm4py.algo.discovery.dfg.adapters.pandas import df_statistics
 import time
 from pm4py.algo.discovery.inductive import factory as inductive_factory
 from pm4py.visualization.petrinet import factory as pn_vis_factory
+from pm4py.visualization.bpmn import factory as bpmn_vis_factory
 from pm4py.visualization.dfg import factory as dfg_vis_factory
 from pm4py.objects.log.adapters.pandas import csv_import_adapter as csv_import_adapter
 from pm4py.algo.filtering.pandas.cases import case_filter
@@ -30,7 +31,7 @@ max_no_cases = 1000
 enable_filtering_df = True
 filtering_df_noise = 0.01
 
-"""
+
 SEP = ","
 QUOTECHAR = None
 inputLog = os.path.join("C:\\road_traffic.csv")
@@ -44,7 +45,7 @@ enable_filtering_on_activities=False
 enable_filtering_on_cases=False
 enable_filtering_df=True
 filtering_df_noise=0.01
-"""
+
 
 
 def execute_script():
@@ -101,6 +102,8 @@ def execute_script():
     print("time10 - time9: " + str(time10 - time9))
     print("time10 - time1: " + str(time10 - time1))
     pn_vis_factory.view(gviz)
+    bpmn = bpmn_vis_factory.apply_petri(net, initial_marking, final_marking, variant="performance", aggregated_statistics=aggregated_statistics, parameters={"format":"svg"})
+    bpmn_vis_factory.view(bpmn)
 
 
 if __name__ == "__main__":
