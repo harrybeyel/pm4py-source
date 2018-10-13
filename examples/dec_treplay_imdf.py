@@ -1,14 +1,9 @@
-import os, sys, inspect
-
-currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-parentdir = os.path.dirname(currentdir)
-sys.path.insert(0, parentdir)
 from pm4py.objects.log.importer.xes import factory as xes_importer
 from pm4py.algo.discovery.inductive import factory as inductive_miner
 from pm4py.visualization.petrinet import factory as pn_vis_factory
 from pm4py.visualization.bpmn import factory as bpmn_vis_factory
 from pm4py.algo.filtering.tracelog.auto_filter import auto_filter
-
+import os
 
 def execute_script():
     # import the log

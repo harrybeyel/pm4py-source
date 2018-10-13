@@ -1,18 +1,12 @@
-import os, sys, inspect
-
-currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-parentdir = os.path.dirname(currentdir)
-sys.path.insert(0, parentdir)
 from pm4py.algo.discovery.inductive import factory as inductive_factory
 from pm4py.objects.log.importer.xes import factory as xes_importer
 from pm4py.visualization.petrinet import factory as pn_vis_factory
 from pm4py.algo.conformance.tokenreplay.versions import token_replay
 import time
 
-
 def execute_script():
-    logPath = "..\\tests\\input_data\\running-example.xes"
-    log = xes_importer.import_log(logPath)
+    log_path = "..\\tests\\input_data\\running-example.xes"
+    log = xes_importer.import_log(log_path)
     print("loaded log")
     net, marking, final_marking = inductive_factory.apply(log)
     for place in marking:

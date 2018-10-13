@@ -11,8 +11,6 @@ def apply_auto_filter(df, parameters=None):
     -----------
     df
         Dataframe
-    admitted_variants
-        List of admitted variants (to include/exclude)
     parameters
         Parameters of the algorithm, including:
             case_id_glue -> Column that contains the Case ID
@@ -31,19 +29,19 @@ def apply_auto_filter(df, parameters=None):
     variants_df = case_statistics.get_variants_df(df, parameters=parameters)
     parameters["variants_df"] = variants_df
     variants = case_statistics.get_variants_statistics(df, parameters=parameters)
-    decreasingFactor = parameters["decreasingFactor"] if "decreasingFactor" in parameters else filtering_constants.DECREASING_FACTOR
+    decreasing_factor = parameters["decreasingFactor"] if "decreasingFactor" in parameters else filtering_constants.DECREASING_FACTOR
 
     admitted_variants = []
     if len(variants) > 0:
-        currentVariantCount = variants[0][case_id_glue]
+        current_variant_count = variants[0][case_id_glue]
 
         i = 0
         while i < len(variants):
-            if variants[i][case_id_glue] >= decreasingFactor * currentVariantCount:
+            if variants[i][case_id_glue] >= decreasing_factor * current_variant_count:
                 admitted_variants.append(variants[i]["variant"])
             else:
                 break
-            currentVariantCount = variants[i][case_id_glue]
+            current_variant_count = variants[i][case_id_glue]
             i = i + 1
 
     return apply(df, admitted_variants, parameters=parameters)

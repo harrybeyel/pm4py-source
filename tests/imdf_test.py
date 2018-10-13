@@ -1,9 +1,3 @@
-import unittest
-import os, sys, inspect
-
-currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-parentdir = os.path.dirname(currentdir)
-sys.path.insert(0, parentdir)
 from pm4py.objects.log.importer.csv import factory as csv_importer
 from pm4py.objects.log.importer.xes import factory as xes_importer
 import pm4py.objects.log.transform as log_transform
@@ -15,17 +9,18 @@ from pm4py.objects import petri
 from pm4py.objects.petri.exporter import pnml as petri_exporter
 from tests.constants import INPUT_DATA_DIR, OUTPUT_DATA_DIR, PROBLEMATIC_XES_DIR
 import logging
-
+import unittest
+import os
 
 class InductiveMinerDFTest(unittest.TestCase):
-    def obtainPetriNetThroughImdf(self, logName):
-        if ".xes" in logName:
-            traceLog = xes_importer.import_log(logName)
+    def obtainPetriNetThroughImdf(self, log_name):
+        if ".xes" in log_name:
+            trace_log = xes_importer.import_log(log_name)
         else:
-            eventLog = csv_importer.import_log(logName)
-            traceLog = log_transform.transform_event_log_to_trace_log(eventLog)
-        net, marking, final_marking = inductive_miner.apply(traceLog, None)
-        return traceLog, net, marking, final_marking
+            event_log = csv_importer.import_log(log_name)
+            trace_log = log_transform.transform_event_log_to_trace_log(event_log)
+        net, marking, final_marking = inductive_miner.apply(trace_log, None)
+        return trace_log, net, marking, final_marking
 
     def test_applyImdfToXES(self):
         # calculate and compare Petri nets obtained on the same log to verify that instances
@@ -94,11 +89,11 @@ class InductiveMinerDFTest(unittest.TestCase):
         logs = os.listdir(PROBLEMATIC_XES_DIR)
         for log in logs:
             try:
-                logFullPath = os.path.join(PROBLEMATIC_XES_DIR, log)
+                log_full_path = os.path.join(PROBLEMATIC_XES_DIR, log)
                 # calculate and compare Petri nets obtained on the same log to verify that instances
                 # are working correctly
-                log1, net1, marking1, fmarking1 = self.obtainPetriNetThroughImdf(logFullPath)
-                log2, net2, marking2, fmarking2 = self.obtainPetriNetThroughImdf(logFullPath)
+                log1, net1, marking1, fmarking1 = self.obtainPetriNetThroughImdf(log_full_path)
+                log2, net2, marking2, fmarking2 = self.obtainPetriNetThroughImdf(log_full_path)
                 self.assertEqual(len(net1.places), len(net2.places))
                 #self.assertEqual(len(net1.transitions), len(net2.transitions))
                 #self.assertEqual(len(net1.arcs), len(net2.arcs))

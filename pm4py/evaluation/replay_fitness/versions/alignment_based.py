@@ -1,9 +1,10 @@
 import multiprocessing as mp
 
 import pm4py
-from pm4py.objects import log as log_lib
-from pm4py.algo.conformance import alignments
 from pm4py import util as pmutil
+from pm4py.algo.conformance import alignments
+from pm4py.objects import log as log_lib
+
 
 def evaluate(aligned_traces, parameters=None):
     """
@@ -22,23 +23,27 @@ def evaluate(aligned_traces, parameters=None):
     dictionary
         Containing two keys (percFitTraces and averageFitness)
     """
-    noTraces = len(aligned_traces)
-    noFitTraces = 0
-    sumFitness = 0.0
+    if parameters is None:
+        parameters = {}
+    str(parameters)
+    no_traces = len(aligned_traces)
+    no_fit_traces = 0
+    sum_fitness = 0.0
 
     for tr in aligned_traces:
         if tr["fitness"] == 1.0:
-            noFitTraces = noFitTraces + 1
-        sumFitness = sumFitness + tr["fitness"]
+            no_fit_traces = no_fit_traces + 1
+        sum_fitness = sum_fitness + tr["fitness"]
 
-    percFitTraces = 0.0
-    averageFitness = 0.0
+    perc_fit_traces = 0.0
+    average_fitness = 0.0
 
-    if noTraces > 0:
-        percFitTraces = (100.0 * float(noFitTraces))/(float(noTraces))
-        averageFitness = float(sumFitness)/float(noTraces)
+    if no_traces > 0:
+        perc_fit_traces = (100.0 * float(no_fit_traces))/(float(no_traces))
+        average_fitness = float(sum_fitness)/float(no_traces)
 
-    return {"percFitTraces": percFitTraces, "averageFitness": averageFitness}
+    return {"percFitTraces": perc_fit_traces, "averageFitness": average_fitness}
+
 
 def apply(log, petri_net, initial_marking, final_marking, parameters=None):
     if parameters is None:
@@ -49,13 +54,14 @@ def apply(log, petri_net, initial_marking, final_marking, parameters=None):
                                                                                         final_marking)
     best_worst_costs = best_worst['cost'] // alignments.utils.STD_MODEL_LOG_MOVE_COST
     with mp.Pool(max(1, mp.cpu_count() - 1)) as pool:
-        alignmentResult = pool.starmap(apply_trace, map(
+        alignment_result = pool.starmap(apply_trace, map(
             lambda tr: (tr, petri_net, initial_marking, final_marking, best_worst_costs, activity_key), log))
 
-        return evaluate(alignmentResult)
+        return evaluate(alignment_result)
+
 
 def apply_trace(trace, petri_net, initial_marking, final_marking, best_worst, activity_key):
-    '''
+    """
     Performs the basic alignment search, given a trace, a net and the costs of the \"best of the worst\".
     The costs of the best of the worst allows us to deduce the fitness of the trace.
     We compute the fitness by means of 1 - alignment costs / best of worst costs (i.e. costs of 0 => fitness 1)
@@ -71,7 +77,7 @@ def apply_trace(trace, petri_net, initial_marking, final_marking, best_worst, ac
     Returns
     -------
     dictionary: `dict` with keys **alignment**, **cost**, **visited_states**, **queued_states** and **traversed_arcs**
-    '''
+    """
     alignment = pm4py.algo.conformance.alignments.versions.state_equation_a_star.apply(trace, petri_net, initial_marking, final_marking, {
         pmutil.constants.PARAMETER_CONSTANT_ACTIVITY_KEY: activity_key})
     fixed_costs = alignment['cost'] // alignments.utils.STD_MODEL_LOG_MOVE_COST

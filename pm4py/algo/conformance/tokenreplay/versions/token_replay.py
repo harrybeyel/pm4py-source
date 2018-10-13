@@ -20,7 +20,7 @@ class NoConceptNameException(Exception):
         self.message = message
 
 
-def add_missingTokens(t, marking):
+def add_missing_tokens(t, marking):
     """
     Adds missing tokens needed to activate a transition
 
@@ -270,7 +270,7 @@ def enable_hidden_transitions(net, marking, activated_transitions, visited_trans
         Transition against we should check if they are enabled
     """
     something_changed = True
-    j_indexes = [0 for x in hidden_transitions_to_enable]
+    j_indexes = [0] * len(hidden_transitions_to_enable)
     z = 0
     while something_changed:
         something_changed = False
@@ -526,7 +526,7 @@ def apply_trace(trace, net, initial_marking, final_marking, trans_map, enable_pl
                         if stop_immediately_unfit:
                             missing = missing + 1
                             break
-                        [m, tokens_added] = add_missingTokens(t, marking)
+                        [m, tokens_added] = add_missing_tokens(t, marking)
                         missing = missing + m
                         if enable_place_fitness:
                             for place in tokens_added.keys():
@@ -576,8 +576,7 @@ def apply_trace(trace, net, initial_marking, final_marking, trans_map, enable_pl
         # try to reach the final marking in a different fashion, if not already reached
         if not break_condition_final_marking(marking, final_marking):
             if len(final_marking) == 1:
-                for place in final_marking:
-                    sink_place = place
+                sink_place = list(final_marking)[0]
 
                 connections_to_sink = []
                 for place in marking:

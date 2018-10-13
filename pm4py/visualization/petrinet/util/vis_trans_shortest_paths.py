@@ -1,5 +1,7 @@
 from statistics import mean, median, stdev
+
 from pm4py.visualization.common.utils import *
+
 
 def get_shortest_paths_from_trans(net, original_trans, spaths):
     """
@@ -28,25 +30,26 @@ def get_shortest_paths_from_trans(net, original_trans, spaths):
         trans = trans_list.pop(0)
         already_visited_trans.append(trans)
         for out_arc in trans.out_arcs:
-            if not out_arc in already_visited_arcs:
+            if out_arc not in already_visited_arcs:
                 already_visited_arcs.append(out_arc)
                 target_place = out_arc.target
-                if not target_place in already_visited_places:
+                if target_place not in already_visited_places:
                     already_visited_places.append(target_place)
                     for place_out_arc in target_place.out_arcs:
-                        if not place_out_arc in already_visited_places:
+                        if place_out_arc not in already_visited_places:
                             target_trans = place_out_arc.target
-                            if not target_trans in already_visited_trans or target_trans == original_trans:
+                            if target_trans not in already_visited_trans or target_trans == original_trans:
                                 already_visited_trans.append(target_trans)
                                 if target_trans.label:
-                                    if not out_arc in spaths:
+                                    if out_arc not in spaths:
                                         spaths[out_arc] = set()
-                                    if not place_out_arc in spaths:
+                                    if place_out_arc not in spaths:
                                         spaths[place_out_arc] = set()
                                     spaths[out_arc].add(((original_trans.name, target_trans.name), 0))
                                     spaths[place_out_arc].add(((original_trans.name, target_trans.name), 1))
                                 trans_list.append(target_trans)
     return spaths
+
 
 def get_shortest_paths(net):
     """
@@ -68,7 +71,8 @@ def get_shortest_paths(net):
             spaths = get_shortest_paths_from_trans(net, trans, spaths)
     return spaths
 
-def get_net_decorations_from_dfg_spaths_acticount(net, dfg, spaths, activities_count, variant="frequency", aggregationMeasure=None):
+
+def get_net_decorations_from_dfg_spaths_acticount(net, dfg, spaths, activities_count, variant="frequency", aggregation_measure=None):
     """
     Get decorations from Petrinet without doing any replay
     but based on DFG measures, shortest paths and activities count.
@@ -87,7 +91,7 @@ def get_net_decorations_from_dfg_spaths_acticount(net, dfg, spaths, activities_c
         Count of activities in the Petri net
     variant
         Describe how to decorate the Petri net (could be frequency or performance)
-    aggregationMeasure
+    aggregation_measure
         Specifies the aggregation measure
 
     Returns
@@ -98,31 +102,31 @@ def get_net_decorations_from_dfg_spaths_acticount(net, dfg, spaths, activities_c
     decorations_single_contrib = {}
     decorations_int = {}
     decorations = {}
-    if aggregationMeasure is None:
+    if aggregation_measure is None:
         if "frequency" in variant:
-            aggregationMeasure = "sum"
+            aggregation_measure = "sum"
         elif "performance" in variant:
-            aggregationMeasure = "mean"
+            aggregation_measure = "mean"
     for arc in spaths:
         for couple in spaths[arc]:
             dfg_key = couple[0]
             status = couple[1]
             if dfg_key in dfg:
-                if not arc in decorations_single_contrib:
+                if arc not in decorations_single_contrib:
                     decorations_single_contrib[arc] = []
                 decorations_single_contrib[arc].append(dfg[dfg_key])
     for arc in decorations_single_contrib:
-        if aggregationMeasure == "sum":
+        if aggregation_measure == "sum":
             decorations_int[arc] = sum(decorations_single_contrib[arc])
-        elif aggregationMeasure == "mean":
+        elif aggregation_measure == "mean":
             decorations_int[arc] = mean(decorations_single_contrib[arc])
-        elif aggregationMeasure == "median":
+        elif aggregation_measure == "median":
             decorations_int[arc] = median(decorations_single_contrib[arc])
-        elif aggregationMeasure == "stdev":
+        elif aggregation_measure == "stdev":
             decorations_int[arc] = stdev(decorations_single_contrib[arc])
-        elif aggregationMeasure == "min":
+        elif aggregation_measure == "min":
             decorations_int[arc] = min(decorations_single_contrib[arc])
-        elif aggregationMeasure == "max":
+        elif aggregation_measure == "max":
             decorations_int[arc] = max(decorations_single_contrib[arc])
 
     if decorations_int:
@@ -130,10 +134,10 @@ def get_net_decorations_from_dfg_spaths_acticount(net, dfg, spaths, activities_c
         arcs_max_value = max(list(decorations_int.values()))
         for arc in decorations_int:
             if "performance" in variant:
-                arcLabel = human_readable_stat(decorations_int[arc])
+                arc_label = human_readable_stat(decorations_int[arc])
             else:
-                arcLabel = str(decorations_int[arc])
-            decorations[arc] = {"label": arcLabel, "penwidth": str(get_arc_penwidth(decorations_int[arc], arcs_min_value, arcs_max_value))}
+                arc_label = str(decorations_int[arc])
+            decorations[arc] = {"label": arc_label, "penwidth": str(get_arc_penwidth(decorations_int[arc], arcs_min_value, arcs_max_value))}
         if "frequency" in variant:
             act_min_value = min(list(activities_count.values()))
             act_max_value = max(list(activities_count.values()))

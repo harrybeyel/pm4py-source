@@ -1,12 +1,15 @@
-from graphviz import Digraph
 import tempfile
 import uuid
+
+from graphviz import Digraph
+
 from pm4py.objects.process_tree import process_tree, tree_constants
 
 DEFAULT_CIRCLE_WIDTH = 0.6
 DEFAULT_CIRCLE_FONT_SIZE = 14
 DEFAULT_BOX_WIDTH = 2.5
 DEFAULT_BOX_FONT_SIZE = 8
+
 
 def repr_tree(tree, viz, current_node, rec_depth, parameters):
     """
@@ -35,7 +38,7 @@ def repr_tree(tree, viz, current_node, rec_depth, parameters):
         (partial) GraphViz object
     """
     for child in tree.children:
-        if type(child) is process_tree.PT_Transition:
+        if type(child) is process_tree.PTTransition:
             viz.attr('node', shape='box', fixedsize='true', width=parameters["box_width"], fontsize=parameters["box_font_size"])
             this_trans_id = str(uuid.uuid4())
             if child.label is None:
@@ -46,7 +49,7 @@ def repr_tree(tree, viz, current_node, rec_depth, parameters):
         elif type(child) is process_tree.ProcessTree:
             condition_wo_operator = child.operator == tree_constants.EXCLUSIVE_OPERATOR and len(
                 child.children) == 1 and type(
-                child.children[0]) is process_tree.PT_Transition
+                child.children[0]) is process_tree.PTTransition
             if condition_wo_operator:
                 childchild = child.children[0]
                 viz.attr('node', shape='box', fixedsize='true', width=parameters["box_width"], fontsize=parameters["box_font_size"])
@@ -64,6 +67,7 @@ def repr_tree(tree, viz, current_node, rec_depth, parameters):
                 viz = repr_tree(child, viz, op_node_identifier, rec_depth+1, parameters)
     return viz
 
+
 def apply(tree, parameters=None):
     """
     Obtain a Process Tree representation through GraphViz
@@ -78,8 +82,6 @@ def apply(tree, parameters=None):
             circle_font_size -> Font size associated to the operators
             box_width -> Width of the box associated to the transitions
             box_font_size -> Font size associated to the transitions boxes
-    variant
-        Variant of the algorithm to use
 
     Returns
     -----------
@@ -89,13 +91,13 @@ def apply(tree, parameters=None):
     if parameters is None:
         parameters = {}
 
-    if not "circle_width" in parameters:
+    if "circle_width" not in parameters:
         parameters["circle_width"] = str(DEFAULT_CIRCLE_WIDTH)
-    if not "circle_font_size" in parameters:
+    if "circle_font_size" not in parameters:
         parameters["circle_font_size"] = str(DEFAULT_CIRCLE_FONT_SIZE)
-    if not "box_width" in parameters:
+    if "box_width" not in parameters:
         parameters["box_width"] = str(DEFAULT_BOX_WIDTH)
-    if not "box_font_size" in parameters:
+    if "box_font_size" not in parameters:
         parameters["box_font_size"] = str(DEFAULT_BOX_FONT_SIZE)
 
     parameters["circle_width"] = str(parameters["circle_width"])

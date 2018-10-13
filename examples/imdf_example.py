@@ -1,24 +1,14 @@
-import os, sys, inspect
-
-currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-parentdir = os.path.dirname(currentdir)
-sys.path.insert(0, parentdir)
-import os, sys, inspect
 import pm4py
-
-currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-parentdir = os.path.dirname(currentdir)
-sys.path.insert(0, parentdir)
 from pm4py.algo.discovery.inductive import factory as inductive_factory
 from pm4py.objects.log.importer.xes import factory as xes_importer
 from pm4py.visualization.petrinet import factory as pn_vis_factory
 import traceback
-
+import os
 
 def execute_script():
-    logPath = os.path.join("..", "tests", "input_data", "running-example.xes")
+    log_path = os.path.join("..", "tests", "input_data", "running-example.xes")
 
-    log = xes_importer.import_log(logPath)
+    log = xes_importer.import_log(log_path)
 
     net, marking, final_marking = inductive_factory.apply(log)
     for place in marking:
@@ -29,33 +19,33 @@ def execute_script():
     pn_vis_factory.view(gviz)
 
     if True:
-        fitTraces = []
+        fit_traces = []
 
         i = 0
         while i < len(log):
             try:
                 print("\n", i, [x["concept:name"] for x in log[i]])
-                cfResult = pm4py.algo.conformance.alignments.versions.state_equation_a_star.apply(log[i], net, marking,
+                cf_result = pm4py.algo.conformance.alignments.versions.state_equation_a_star.apply(log[i], net, marking,
                                                                                                   final_marking)[
                     'alignment']
-                if cfResult is None:
+                if cf_result is None:
                     print("alignment is none!")
                 else:
-                    isFit = True
-                    for couple in cfResult:
+                    is_fit = True
+                    for couple in cf_result:
                         print(couple)
                         if not (couple[0] == couple[1] or couple[0] == ">>" and couple[1] is None):
-                            isFit = False
-                    print("isFit = " + str(isFit))
+                            is_fit = False
+                    print("isFit = " + str(is_fit))
 
-                    if isFit:
-                        fitTraces.append(log[i])
+                    if is_fit:
+                        fit_traces.append(log[i])
             except:
                 print("EXCEPTION ", i)
                 traceback.print_exc()
             i = i + 1
-        print(fitTraces)
-        print(len(fitTraces))
+        print(fit_traces)
+        print(len(fit_traces))
 
 
 if __name__ == "__main__":

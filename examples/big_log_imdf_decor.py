@@ -1,8 +1,3 @@
-import os, sys, inspect
-
-currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-parentdir = os.path.dirname(currentdir)
-sys.path.insert(0, parentdir)
 from pm4py.objects.log.importer.xes import factory as xes_importer
 from pm4py.algo.discovery.inductive import factory as inductive_miner
 from pm4py.visualization.petrinet.util import vis_trans_shortest_paths
@@ -10,12 +5,12 @@ from pm4py.algo.filtering.tracelog.attributes import attributes_filter
 from pm4py.algo.discovery.dfg import factory as dfg_factory
 from pm4py.visualization.petrinet import factory as pn_vis_factory
 from pm4py.visualization.bpmn import factory as bpmn_vis_factory
-
+import os
 
 def execute_script():
     # read the log using the nonstandard importer (faster)
-    logPath = os.path.join("..", "tests", "input_data", "receipt.xes")
-    log = xes_importer.import_log(logPath, variant="nonstandard")
+    log_path = os.path.join("..", "tests", "input_data", "receipt.xes")
+    log = xes_importer.import_log(log_path, variant="nonstandard")
     # applies Inductive Miner on the log
     net, initial_marking, final_marking = inductive_miner.apply(log)
     # find shortest paths in the net
@@ -26,9 +21,9 @@ def execute_script():
     variant = "frequency"
     # we decide the aggregation measure (sum, min, max, mean, median, stdev)
     if variant == "frequency":
-        aggregationMeasure = "sum"
+        aggregation_measure = "sum"
     elif variant == "performance":
-        aggregationMeasure = "mean"
+        aggregation_measure = "mean"
     # we find the DFG
     dfg = dfg_factory.apply(log, variant=variant)
     # we find the number of activities occurrences in the trace log
@@ -37,7 +32,7 @@ def execute_script():
     aggregated_statistics = vis_trans_shortest_paths.get_net_decorations_from_dfg_spaths_acticount(net, dfg, spaths,
                                                                                                    activities_count,
                                                                                                    variant=variant,
-                                                                                                   aggregationMeasure=aggregationMeasure)
+                                                                                                   aggregation_measure=aggregation_measure)
     # we find the gviz
     parameters_viz = {"format": "svg"}
     gviz = pn_vis_factory.apply(net, initial_marking, final_marking, variant=variant,

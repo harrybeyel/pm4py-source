@@ -27,7 +27,7 @@ class ProcessTree(object):
         else:
             ret_list = [""]
 
-        condition_wo_operator = self.operator == tree_constants.EXCLUSIVE_OPERATOR and len(self.children) == 1 and type(self.children[0]) is process_tree.PT_Transition
+        condition_wo_operator = self.operator == tree_constants.EXCLUSIVE_OPERATOR and len(self.children) == 1 and type(self.children[0]) is PTTransition
 
         if not condition_wo_operator:
             ret_list.append(self.operator + "(")
@@ -66,7 +66,7 @@ class ProcessTree(object):
         if trans.label is None:
             if "skip" in trans.name:
                 added_skip_trans = [x for x in self.children if
-                                    type(x) is PT_Transition and "skip" in x.name]
+                                    type(x) is PTTransition and "skip" in x.name]
                 if added_skip_trans:
                     proceed_to_add = False
         if proceed_to_add:
@@ -170,7 +170,7 @@ class ProcessTree(object):
 
         return condition1 or condition2
 
-class PT_Transition(object):
+class PTTransition(object):
     def __init__(self, name, label):
         """
         Constructor
