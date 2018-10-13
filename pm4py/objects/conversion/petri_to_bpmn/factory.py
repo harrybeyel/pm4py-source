@@ -1,4 +1,4 @@
-from pm4py.objects.conversion.bpmn_to_petri.versions import classic
+from pm4py.objects.conversion.petri_to_bpmn.versions import classic
 
 CLASSIC = "classic"
 

@@ -20,7 +20,7 @@ from pm4py.visualization.common.save import save as vis_save
 from pm4py import util as pmutil
 from pm4py.visualization.bpmn import factory as bpmn_vis_factory
 from pm4py.objects.bpmn.exporter import bpmn20 as bpmn_exporter
-from pm4py.objects.conversion.bpmn_to_petri import factory as bpmn_converter
+from pm4py.objects.conversion.petri_to_bpmn import factory as bpmn_converter
 
 if __name__ == "__main__":
     bpmn_folder = "bpmn_folder"

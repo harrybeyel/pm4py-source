@@ -1,6 +1,6 @@
 import bpmn_python.bpmn_diagram_rep as diagram
 import uuid
-from pm4py.objects.conversion.bpmn_to_petri.util import constants
+from pm4py.objects.conversion.petri_to_bpmn.util import constants
 from pm4py.objects.petri.petrinet import PetriNet
 
 def get_start_trans_petri_given_imarking(initial_marking):

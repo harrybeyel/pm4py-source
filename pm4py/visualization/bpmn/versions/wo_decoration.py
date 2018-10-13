@@ -1,5 +1,5 @@
 from pm4py.visualization.bpmn.util.bpmn_to_figure import bpmn_diagram_to_figure
-from pm4py.objects.conversion.bpmn_to_petri import factory as bpmn_converter
+from pm4py.objects.conversion.petri_to_bpmn import factory as bpmn_converter
 
 def apply(bpmn_graph, parameters=None, bpmn_aggreg_statistics=None):
     """

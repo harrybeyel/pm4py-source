@@ -3,7 +3,7 @@ import networkx as nx
 import pydotplus
 import bpmn_python.bpmn_python_consts as consts
 import tempfile
-from pm4py.objects.conversion.bpmn_to_petri.util import constants
+from pm4py.objects.conversion.petri_to_bpmn.util import constants
 
 EXCLUSIVE_OPERATOR = ""
 PARALLEL_OPERATOR = "+"

@@ -1,5 +1,5 @@
 from pm4py.visualization.bpmn.util.bpmn_to_figure import bpmn_diagram_to_figure
-from pm4py.objects.conversion.bpmn_to_petri import factory as bpmn_converter
+from pm4py.objects.conversion.petri_to_bpmn import factory as bpmn_converter
 from pm4py.visualization.petrinet.versions import token_decoration
 from pm4py.visualization.bpmn.util import convert_performance_map
 from pm4py.algo.discovery.dfg import factory as dfg_factory
