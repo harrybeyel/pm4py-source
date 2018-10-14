@@ -30,6 +30,23 @@ class Subtree(object):
         self.rec_depth = rec_depth
         self.noise_threshold = noise_threshold
 
+        self.second_iteration = None
+        self.activities = None
+        self.dfg = None
+        self.outgoing = None
+        self.ingoing = None
+        self.self_loop_activities = None
+        self.initial_ingoing = None
+        self.initial_outgoing = None
+        self.activities_direction = None
+        self.activities_dir_list = None
+        self.negated_dfg = None
+        self.negated_activities = None
+        self.negated_outgoing = None
+        self.negated_ingoing = None
+        self.detected_cut = None
+        self.children = None
+
         self.initialize_tree(dfg, initial_dfg, activities)
 
     def initialize_tree(self, dfg, initial_dfg, activities, second_iteration=False):
@@ -45,6 +62,8 @@ class Subtree(object):
             Referral directly follows graph that should be taken in account adding hidden/loop transitions
         activities
             Activities of this subtree
+        second_iteration
+            Boolean that indicates if we are executing this method for the second time
         """
 
         self.second_iteration = second_iteration
@@ -129,7 +148,7 @@ class Subtree(object):
             else:
                 return [False, [], []]
         i = 1
-        while i < len(self.activities_dir_list) - 1:
+        for i in range(1, len(self.activities_dir_list) - 1):
             act = self.activities_dir_list[i]
             ret, set1, set2 = self.determine_best_set_sequential(act, set1, set2)
             if ret is False:
@@ -177,34 +196,33 @@ class Subtree(object):
                     connected_components.append(outgoing_act)
                 activities_considered = activities_considered.union(set(outgoing_act))
 
-        something_changed = True
-        it = 0
-        while something_changed:
-            it = it + 1
+        max_it = len(connected_components)
+        for it in range(max_it-1):
             something_changed = False
 
             old_connected_components = copy(connected_components)
             connected_components = 0
             connected_components = []
 
-            i = 0
-            while i < len(old_connected_components):
+            for i in range(len(old_connected_components)):
                 conn1 = old_connected_components[i]
-                j = i + 1
-                while j < len(old_connected_components):
-                    conn2 = old_connected_components[j]
-                    inte = conn1.intersection(conn2)
 
-                    if len(inte) > 0:
-                        conn1 = conn1.union(conn2)
-                        something_changed = True
-                        del old_connected_components[j]
-                        continue
-                    j = j + 1
+                if conn1 is not None:
+                    for j in range(i+1, len(old_connected_components)):
+                        conn2 = old_connected_components[j]
+                        if conn2 is not None:
+                            inte = conn1.intersection(conn2)
 
-                if not conn1 in connected_components:
+                            if len(inte) > 0:
+                                conn1 = conn1.union(conn2)
+                                something_changed = True
+                                old_connected_components[j] = None
+
+                if conn1 is not None and conn1 not in connected_components:
                     connected_components.append(conn1)
-                i = i + 1
+
+            if not something_changed:
+                break
 
         if len(connected_components) == 0:
             for activity in activities:
@@ -212,7 +230,7 @@ class Subtree(object):
 
         return connected_components
 
-    def checkParCut(self, conn_components):
+    def check_par_cut(self, conn_components):
         """
         Checks if in a parallel cut all relations are present
 
@@ -221,20 +239,15 @@ class Subtree(object):
         conn_components
             Connected components
         """
-        i = 0
-        while i < len(conn_components):
+        for i in range(len(conn_components)):
             conn1 = conn_components[i]
-            j = i + 1
-            while j < len(conn_components):
+            for j in range(i+1, len(conn_components)):
                 conn2 = conn_components[j]
-
                 for act1 in conn1:
                     for act2 in conn2:
                         if not ((act1 in self.outgoing and act2 in self.outgoing[act1]) and (
                                 act1 in self.ingoing and act2 in self.ingoing[act1])):
                             return False
-                j = j + 1
-            i = i + 1
         return True
 
     def detect_concurrent_cut(self):
@@ -256,7 +269,7 @@ class Subtree(object):
         conn_components = self.get_connected_components(self.negated_ingoing, self.negated_outgoing, self.activities)
 
         if len(conn_components) > 1:
-            if self.checkParCut(conn_components):
+            if self.check_par_cut(conn_components):
                 return [True, conn_components]
 
         return [False, []]
@@ -318,13 +331,13 @@ class Subtree(object):
         idx_max_sum = 0
 
         for comp in comps:
-            sum = 0
+            summ = 0
             for act1 in comp:
                 if act1 in ingoing and act2 in ingoing[act1]:
-                    sum = sum + ingoing[act1][act2]
+                    summ = summ + ingoing[act1][act2]
                 if act1 in outgoing and act2 in outgoing[act1]:
-                    sum = sum + outgoing[act1][act2]
-            sums.append(sum)
+                    summ = summ + outgoing[act1][act2]
+            sums.append(summ)
             if sums[-1] > sums[idx_max_sum]:
                 idx_max_sum = len(sums) - 1
 

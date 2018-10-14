@@ -17,6 +17,8 @@ def apply(net, initial_marking, final_marking, decorations=None, parameters=None
         Initial marking
     final_marking
         Final marking
+    decorations
+        Decorations for elements in the Petri net
     parameters
         Algorithm parameters
 
@@ -27,16 +29,16 @@ def apply(net, initial_marking, final_marking, decorations=None, parameters=None
     """
     if parameters is None:
         parameters = {}
-    format = "png"
+    image_format = "png"
     debug = False
     if "format" in parameters:
-        format = parameters["format"]
+        image_format = parameters["format"]
     if "debug" in parameters:
         debug = parameters["debug"]
-    return graphviz_visualization(net, format=format, initial_marking=initial_marking, final_marking=final_marking, decorations=decorations, debug=debug)
+    return graphviz_visualization(net, image_format=image_format, initial_marking=initial_marking, final_marking=final_marking, decorations=decorations, debug=debug)
 
 
-def graphviz_visualization(net, format="png", initial_marking=None, final_marking=None, decorations=None, debug=False):
+def graphviz_visualization(net, image_format="png", initial_marking=None, final_marking=None, decorations=None, debug=False):
     """
     Provides visualization for the petrinet
 
@@ -44,6 +46,8 @@ def graphviz_visualization(net, format="png", initial_marking=None, final_markin
     ----------
     net: :class:`pm4py.entities.petri.petrinet.PetriNet`
         Petri net
+    image_format
+        Format that should be associated to the image
     initial_marking
         Initial marking of the Petri net
     final_marking
@@ -104,6 +108,6 @@ def graphviz_visualization(net, format="png", initial_marking=None, final_markin
     viz.attr(overlap='false')
     viz.attr(fontsize='11')
 
-    viz.format = format
+    viz.format = image_format
 
     return viz

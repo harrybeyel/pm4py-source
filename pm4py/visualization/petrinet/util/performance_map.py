@@ -2,7 +2,6 @@ from copy import copy
 from pm4py.objects.petri import semantics
 from pm4py.objects.petri.petrinet import PetriNet
 from statistics import mean, median, stdev
-from threading import Lock, Thread
 from pm4py.visualization.common.utils import *
 
 MAX_NO_THREADS = 1000
@@ -42,8 +41,7 @@ def calculate_annotation_for_trace(trace, net, initial_marking, act_trans, activ
             annotations_places_trans[place] = {"count": 0}
             annotations_places_trans[place]["count"] = annotations_places_trans[place]["count"] + marking[place]
         trace_place_stats[place] = [current_trace_index] * marking[place]
-    z = 0
-    while z < len(act_trans):
+    for z in range(len(act_trans)):
         trans = act_trans[z]
         if trans not in annotations_places_trans:
             annotations_places_trans[trans] = {"count": 0}
@@ -78,7 +76,6 @@ def calculate_annotation_for_trace(trace, net, initial_marking, act_trans, activ
             if target_place not in trace_place_stats:
                 trace_place_stats[target_place] = []
             trace_place_stats[target_place].append(current_trace_index)
-        z = z + 1
 
     return annotations_places_trans, annotations_arcs
 
@@ -198,12 +195,15 @@ def aggregate_stats(statistics, elem, aggregation_measure):
         Element statistics
     elem
         Current element
+    aggregation_measure
+        Aggregation measure (e.g. mean, min) to use
 
     Returns
     -----------
     aggr_stat
         Aggregated statistics
     """
+    aggr_stat = 0
     if aggregation_measure == "mean" or aggregation_measure is None:
         aggr_stat = mean(statistics[elem]["performance"])
     elif aggregation_measure == "median":
@@ -228,6 +228,8 @@ def find_min_max_arc_performance(statistics, aggregation_measure):
     -----------
     statistics
         Element statistics
+    aggregation_measure
+        Aggregation measure (e.g. mean, min) to use
 
     Returns
     -----------
@@ -257,6 +259,10 @@ def aggregate_statistics(statistics, measure="frequency", aggregation_measure=No
     ----------
     statistics
         Individual element statistics (including unaggregated performances)
+    measure
+        Desidered view on data (frequency or performance)
+    aggregation_measure
+        Aggregation measure (e.g. mean, min) to use
 
     Returns
     ----------

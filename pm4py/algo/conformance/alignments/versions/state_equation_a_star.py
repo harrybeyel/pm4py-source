@@ -12,7 +12,6 @@ References
       ATAED@Petri Nets/ACSD 2017: 6-20. `http://ceur-ws.org/Vol-1847/paper01.pdf`_.
 
 """
-import pm4py
 import heapq
 from typing import Any
 
@@ -20,11 +19,11 @@ import numpy as np
 from cvxopt import matrix, solvers
 from dataclasses import dataclass
 
+import pm4py
 from pm4py import util as pm4pyutil
-from pm4py.objects import log as log_lib
 from pm4py.algo.conformance import alignments
+from pm4py.objects import log as log_lib
 from pm4py.objects import petri
-
 from pm4py.objects.log import log as log_implementation
 
 PARAM_TRACE_COST_FUNCTION = 'trace_cost_function'
@@ -223,10 +222,10 @@ def __compute_exact_heuristic(sync_net, incidence_matrix, marking, cost_vec, fin
     :return: h: heuristic value, x: solution vector
     """
     m_vec = incidence_matrix.encode_marking(marking)
-    G = matrix(-np.eye(len(sync_net.transitions)))
+    g_matrix = matrix(-np.eye(len(sync_net.transitions)))
     h_cvx = matrix(np.zeros(len(sync_net.transitions)))
-    A = matrix(incidence_matrix.A, tc='d')
-    h_obj = solvers.lp(matrix(cost_vec, tc='d'), G, h_cvx, A.trans(),
+    a_matrix = matrix(incidence_matrix.a_matrix, tc='d')
+    h_obj = solvers.lp(matrix(cost_vec, tc='d'), g_matrix, h_cvx, a_matrix.trans(),
                        matrix([i - j for i, j in zip(fin_vec, m_vec)], tc='d'), solver='glpk',
                        options={'glpk': {'msg_lev': 'GLP_MSG_OFF'}})
     h = h_obj['primal objective']
@@ -283,10 +282,6 @@ class SearchTuple:
         return ret
 
     def __repr__(self):
-        stringBuild = []
-        stringBuild.append("\nm=" + str(self.m))
-        stringBuild.append(" f=" + str(self.f))
-        stringBuild.append(' g=' + str(self.g))
-        stringBuild.append(" h=" + str(self.h))
-        stringBuild.append(" path=" + str(self.__get_firing_sequence()) + "\n\n")
-        return " ".join(stringBuild)
+        string_build = ["\nm=" + str(self.m), " f=" + str(self.f), ' g=' + str(self.g), " h=" + str(self.h),
+                        " path=" + str(self.__get_firing_sequence()) + "\n\n"]
+        return " ".join(string_build)

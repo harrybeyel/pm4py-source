@@ -21,8 +21,7 @@ def execute_script():
     if True:
         fit_traces = []
 
-        i = 0
-        while i < len(log):
+        for i in range(0, len(log)):
             try:
                 print("\n", i, [x["concept:name"] for x in log[i]])
                 cf_result = pm4py.algo.conformance.alignments.versions.state_equation_a_star.apply(log[i], net, marking,
@@ -40,10 +39,9 @@ def execute_script():
 
                     if is_fit:
                         fit_traces.append(log[i])
-            except:
+            except Exception as e:
                 print("EXCEPTION ", i)
                 traceback.print_exc()
-            i = i + 1
         print(fit_traces)
         print(len(fit_traces))
 

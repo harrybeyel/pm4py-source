@@ -23,7 +23,9 @@ def apply_playout(net, initial_marking, no_traces=100, max_trace_length=100):
         trace = log_instance.Trace()
         trace.attributes["concept:name"] = str(i)
         marking = copy(initial_marking)
-        while semantics.enabled_transitions(net, marking):
+        for j in range(100000):
+            if not semantics.enabled_transitions(net, marking):
+                break
             all_enabled_trans = semantics.enabled_transitions(net, marking)
             all_enabled_trans = list(all_enabled_trans)
             shuffle(all_enabled_trans)
@@ -47,6 +49,8 @@ def apply(net, initial_marking, parameters=None):
     -----------
     net
         Petri net to play-out
+    initial_marking
+        Initial marking of the Petri net
     parameters
         Parameters of the algorithm:
             noTraces -> Number of traces of the log to generate

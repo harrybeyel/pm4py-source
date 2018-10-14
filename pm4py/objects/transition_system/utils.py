@@ -12,6 +12,7 @@ def add_arc_from_to(name, fr, to, ts, data=None):
     fr: state from
     to:  state to
     ts: transition system to use
+    data: data associated to the Transition System
 
     Returns
     -------
@@ -79,13 +80,13 @@ def transitive_reduction(ts):
     None
     """
 
-    def check(state, child, done):
-        if child not in done:
-            child_children = [tr.to_state for tr in ts.transitions if tr in child.outgoing]
+    def check(this_state, this_child, this_done):
+        if this_child not in this_done:
+            child_children = [tr.to_state for tr in ts.transitions if tr in this_child.outgoing]
             for child_child in child_children:
-                remove_all_arcs_from_to(state, child_child, ts)
-                check(state, child_child, done)
-            done.add(child)
+                remove_all_arcs_from_to(this_state, child_child, ts)
+                check(this_state, child_child, this_done)
+            this_done.add(this_child)
 
     for state in ts.states:
         done = set()

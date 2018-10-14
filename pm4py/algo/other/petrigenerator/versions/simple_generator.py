@@ -74,11 +74,13 @@ class SubtreeGenerator(object):
         """
         Generate an activity name
         """
-        while True:
+        activity_name = ""
+        for i in range(100000):
             activity_name = self.generate_string(4)
             if activity_name not in self.addedActivities:
                 self.addedActivities.add(activity_name)
-                return activity_name
+                break
+        return activity_name
 
     def simulate_net(self):
         """
@@ -102,6 +104,10 @@ class SubtreeGenerator(object):
             (If specified) Chosen behavior for the current subtree
         """
         num_of_activities_this_subtree = 0
+        num_of_child_subtrees = 0
+        activities_names = []
+        added_transitions = []
+        subtrees_types = []
         self.noOfSubtrees = self.noOfSubtrees + 1
         this_possible_behaviors = deepcopy(self.possible_behaviors)
         if rec_depth == 0:
@@ -112,23 +118,22 @@ class SubtreeGenerator(object):
         if chosen_behavior is None:
             chosen_behavior = random.choice(this_possible_behaviors)
         if chosen_behavior == "sequential" or chosen_behavior == "flower":
-            while num_of_activities_this_subtree < self.minNoOfActivitiesPerSubtree:
+            for i in range(10000):
+                if num_of_activities_this_subtree >= self.minNoOfActivitiesPerSubtree:
+                    break
                 num_of_activities_this_subtree = random.randrange(0, self.maxNoOfActivitiesPerSubtree)
-            activities_names = []
-            added_transitions = []
-            i = 0
-            while i < num_of_activities_this_subtree:
+            for i in range(num_of_activities_this_subtree):
                 activity_name = self.generate_activity()
                 activities_names.append(activity_name)
                 trans = petri.petrinet.PetriNet.Transition(activity_name, activity_name)
                 self.net.transitions.add(trans)
                 added_transitions.append(trans)
-                i = i + 1
         if chosen_behavior == "concurrent" or chosen_behavior == "parallel":
             num_of_child_subtrees = 0
-            while num_of_child_subtrees < self.minNoOfActivitiesPerSubtree:
+            for i in range(100000):
+                if num_of_child_subtrees >= self.minNoOfActivitiesPerSubtree:
+                    break
                 num_of_child_subtrees = random.randrange(0, self.maxNoOfActivitiesPerSubtree)
-            subtrees_types = []
             for i in range(num_of_child_subtrees):
                 if self.noOfSubtrees >= self.maxNoOfSubtrees:
                     subtrees_types.append("sequential")
@@ -305,7 +310,7 @@ def apply(parameters=None):
     min_no_of_activities_per_subtree = 2
     max_no_of_activities_per_subtree = 6
     max_no_of_subtrees = 5
-    prow_spawn_subtree = 0.6
+    prob_spawn_subtree = 0.6
     prob_auto_skip = 0.35
     prob_auto_loop = 0.0
     possible_behaviors = ["sequential", "concurrent", "flower", "parallel"]

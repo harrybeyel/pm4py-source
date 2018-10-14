@@ -11,12 +11,12 @@ def get_transition(counts, label):
     return PTTransition(label, label)
 
 
-def get_new_hidden_trans(counts, type="unknown"):
+def get_new_hidden_trans(counts, type_trans="unknown"):
     """
     Create a hidden node (transition) in the process tree
     """
     counts.inc_no_hidden()
-    return PTTransition(type + '_' + str(counts.num_hidden), None)
+    return PTTransition(type_trans + '_' + str(counts.num_hidden), None)
 
 def check_loop_need(spec_tree_struct):
     """
@@ -64,6 +64,7 @@ def get_repr(spec_tree_struct, rec_depth, counts, must_add_skip=False):
 
     need_loop_on_subtree = check_loop_need(spec_tree_struct)
 
+    child_tree = ProcessTree()
     if spec_tree_struct.detected_cut == "flower" or (spec_tree_struct.detected_cut == "base_concurrent" and need_loop_on_subtree):
         final_tree_repr.operator = tree_constants.LOOP_OPERATOR
         child_tree = ProcessTree()
@@ -106,7 +107,7 @@ def get_repr(spec_tree_struct, rec_depth, counts, must_add_skip=False):
         if verify_skip_transition_necessity(must_add_skip, spec_tree_struct.initial_dfg,
                                             spec_tree_struct.activities) and counts.num_visible_trans > 0:
             # add skip transition
-            child_tree.add_transition(get_new_hidden_trans(counts, type="skip"))
+            child_tree.add_transition(get_new_hidden_trans(counts, type_trans="skip"))
     if spec_tree_struct.detected_cut == "sequential" or spec_tree_struct.detected_cut == "loopCut":
         child0, counts = get_repr(spec_tree_struct.children[0], rec_depth + 1, counts,
                                   must_add_skip=verify_skip_transition_necessity(False,
