@@ -65,9 +65,9 @@ def apply_petri(net, initial_marking, final_marking, log=None, aggregated_statis
 
     image_format = parameters["format"] if "format" in parameters else "png"
 
-    bpmn_graph, elements_correspondence, inv_elements_correspondence, el_corr_keys_map = bpmn_converter.apply(net,
-                                                                                                              initial_marking,
-                                                                                                              final_marking)
+    bpmn_graph, el_corr, inv_el_corr, el_corr_keys_map = bpmn_converter.apply(net,
+                                                                              initial_marking,
+                                                                              final_marking)
 
     file_name = bpmn_diagram_to_figure(bpmn_graph, image_format, bpmn_aggreg_statistics=None)
     return file_name

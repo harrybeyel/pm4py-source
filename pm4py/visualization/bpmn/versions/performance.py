@@ -1,8 +1,8 @@
-import pm4py
 from pm4py.algo.discovery.dfg import factory as dfg_factory
 from pm4py.algo.filtering.tracelog.attributes import attributes_filter
-from pm4py.objects import log as log_lib
 from pm4py.objects.conversion.petri_to_bpmn import factory as bpmn_converter
+from pm4py.objects.log.util.xes import DEFAULT_NAME_KEY
+from pm4py.util.constants import PARAMETER_CONSTANT_ACTIVITY_KEY
 from pm4py.visualization.bpmn.util import convert_performance_map
 from pm4py.visualization.bpmn.util.bpmn_to_figure import bpmn_diagram_to_figure
 from pm4py.visualization.petrinet.util import vis_trans_shortest_paths
@@ -58,7 +58,8 @@ def apply_petri(net, initial_marking, final_marking, log=None, aggregated_statis
             format -> Format of the image to render (pdf, png, svg)
             aggregationMeasure -> Measure to use to aggregate statistics
             pmutil.constants.PARAMETER_CONSTANT_ACTIVITY_KEY -> Specification of the activity key (if not concept:name)
-            pmutil.constants.PARAMETER_CONSTANT_TIMESTAMP_KEY -> Specification of the timestamp key (if not time:timestamp)
+            pmutil.constants.PARAMETER_CONSTANT_TIMESTAMP_KEY -> Specification of the timestamp key
+            (if not time:timestamp)
 
     Returns
     -----------
@@ -71,9 +72,9 @@ def apply_petri(net, initial_marking, final_marking, log=None, aggregated_statis
 
     image_format = parameters["format"] if "format" in parameters else "png"
 
-    bpmn_graph, elements_correspondence, inv_elements_correspondence, el_corr_keys_map = bpmn_converter.apply(net,
-                                                                                                              initial_marking,
-                                                                                                              final_marking)
+    bpmn_graph, el_corr, inv_el_corr, el_corr_keys_map = bpmn_converter.apply(net,
+                                                                              initial_marking,
+                                                                              final_marking)
 
     if aggregated_statistics is None and log is not None:
         aggregated_statistics = token_decoration.get_decorations(log, net, initial_marking, final_marking,
@@ -82,13 +83,13 @@ def apply_petri(net, initial_marking, final_marking, log=None, aggregated_statis
     bpmn_aggreg_statistics = None
     if aggregated_statistics is not None:
         bpmn_aggreg_statistics = convert_performance_map.convert_performance_map_to_bpmn(aggregated_statistics,
-                                                                                         inv_elements_correspondence)
+                                                                                         inv_el_corr)
 
     file_name = bpmn_diagram_to_figure(bpmn_graph, image_format, bpmn_aggreg_statistics=bpmn_aggreg_statistics)
     return file_name
 
 
-def apply_petri_greedy(net, initial_marking, final_marking, log=None, aggregated_statistics=None, parameters=None):
+def apply_petri_greedy(net, initial_marking, final_marking, log=None, aggr_stat=None, parameters=None):
     """
     Visualize a BPMN graph from a Petri net, decorated with performance, using the given parameters (greedy algorithm)
 
@@ -102,14 +103,16 @@ def apply_petri_greedy(net, initial_marking, final_marking, log=None, aggregated
         Final marking
     log
         (Optional) log where the replay technique should be applied
-    aggregated_statistics
+    aggr_stat
         (Optional) element-wise statistics calculated on the Petri net
     parameters
         Possible parameters of the algorithm, including:
             format -> Format of the image to render (pdf, png, svg)
             aggregationMeasure -> Measure to use to aggregate statistics
-            pm4py.util.constants.PARAMETER_CONSTANT_ACTIVITY_KEY -> Specification of the activity key (if not concept:name)
-            pm4py.util.constants.PARAMETER_CONSTANT_TIMESTAMP_KEY -> Specification of the timestamp key (if not time:timestamp)
+            pm4py.util.constants.PARAMETER_CONSTANT_ACTIVITY_KEY -> Specification of the activity key
+            (if not concept:name)
+            pm4py.util.constants.PARAMETER_CONSTANT_TIMESTAMP_KEY -> Specification of the timestamp key
+            (if not time:timestamp)
 
     Returns
     -----------
@@ -122,25 +125,25 @@ def apply_petri_greedy(net, initial_marking, final_marking, log=None, aggregated
 
     image_format = parameters["format"] if "format" in parameters else "png"
 
-    bpmn_graph, elements_correspondence, inv_elements_correspondence, el_corr_keys_map = bpmn_converter.apply(net,
-                                                                                                              initial_marking,
-                                                                                                              final_marking)
+    bpmn_graph, el_corr, inv_el_corr, el_corr_keys_map = bpmn_converter.apply(net,
+                                                                              initial_marking,
+                                                                              final_marking)
 
     activity_key = parameters[
-        pm4py.util.constants.PARAMETER_CONSTANT_ACTIVITY_KEY] if pm4py.util.constants.PARAMETER_CONSTANT_ACTIVITY_KEY in parameters else log_lib.util.xes.DEFAULT_NAME_KEY
+        PARAMETER_CONSTANT_ACTIVITY_KEY] if PARAMETER_CONSTANT_ACTIVITY_KEY in parameters else DEFAULT_NAME_KEY
 
-    if aggregated_statistics is None and log is not None:
+    if aggr_stat is None and log is not None:
         dfg = dfg_factory.apply(log, variant="performance")
         activities_count = attributes_filter.get_attribute_values(log, activity_key)
         spaths = vis_trans_shortest_paths.get_shortest_paths(net)
-        aggregated_statistics = vis_trans_shortest_paths.get_decorations_from_dfg_spaths_acticount(net, dfg, spaths,
-                                                                                                   activities_count,
-                                                                                                   variant="performance")
+        aggr_stat = vis_trans_shortest_paths.get_decorations_from_dfg_spaths_acticount(net, dfg, spaths,
+                                                                                       activities_count,
+                                                                                       variant="performance")
 
     bpmn_aggreg_statistics = None
-    if aggregated_statistics is not None:
-        bpmn_aggreg_statistics = convert_performance_map.convert_performance_map_to_bpmn(aggregated_statistics,
-                                                                                         inv_elements_correspondence)
+    if aggr_stat is not None:
+        bpmn_aggreg_statistics = convert_performance_map.convert_performance_map_to_bpmn(aggr_stat,
+                                                                                         inv_el_corr)
 
     file_name = bpmn_diagram_to_figure(bpmn_graph, image_format, bpmn_aggreg_statistics=bpmn_aggreg_statistics)
     return file_name
