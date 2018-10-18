@@ -213,6 +213,9 @@ def apply(net, initial_marking, final_marking, parameters=None):
 
     for place in net.places:
         if len(place.in_arcs) == 1 and len(place.out_arcs) == 1:
+            in_trans = None
+            out_trans = None
+
             for arc in place.in_arcs:
                 in_arc = arc
                 in_trans = arc.source
@@ -220,7 +223,7 @@ def apply(net, initial_marking, final_marking, parameters=None):
                 out_arc = arc
                 out_trans = arc.target
 
-            if (len(in_trans.out_arcs) > 1 and len(out_trans.in_arcs) == 1):
+            if len(in_trans.out_arcs) > 1 and len(out_trans.in_arcs) == 1:
                 if not in_trans in mapped_trans:
                     gateway_name_split = in_trans.name
                     gateway_id_split = in_trans.name
@@ -228,7 +231,7 @@ def apply(net, initial_marking, final_marking, parameters=None):
                                                                                     gateway_name=gateway_name_split,
                                                                                     node_id=gateway_id_split)
                     mapped_trans[in_trans] = gateway_split
-            elif (len(out_trans.in_arcs) > 1 and len(in_trans.out_arcs) == 1):
+            elif len(out_trans.in_arcs) > 1 and len(in_trans.out_arcs) == 1:
                 if not out_trans in mapped_trans:
                     gateway_name_join = out_trans.name
                     gateway_id_join = out_trans.name

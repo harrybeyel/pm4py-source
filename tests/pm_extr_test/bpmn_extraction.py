@@ -28,7 +28,7 @@ if __name__ == "__main__":
             logPath = os.path.join(log_folder, log_name)
             log = xes_factory.import_log(logPath, variant="iterparse")
 
-            log, classifier_key = insert_classifier.search_and_insert_activity_classifier_attribute(log)
+            log, classifier_key = insert_classifier.search_act_class_attr(log)
 
             print("loaded log")
 

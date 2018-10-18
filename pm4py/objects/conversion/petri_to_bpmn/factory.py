@@ -19,6 +19,9 @@ def apply(net, initial_marking, final_marking, parameters=None, variant="classic
         Final marking of the Petri net
     parameters
         Parameters of the algorithm
+    variant
+        Variant of the algorithm to use, possible values:
+            classic
 
     Returns
     -----------

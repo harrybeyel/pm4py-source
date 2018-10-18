@@ -7,7 +7,7 @@ EXCLUSIVE_OPERATOR = ""
 PARALLEL_OPERATOR = "+"
 
 
-def bpmn_diagram_to_figure(bpmn_graph, format, bpmn_aggreg_statistics=None):
+def bpmn_diagram_to_figure(bpmn_graph, image_format, bpmn_aggreg_statistics=None):
     """
     Render a BPMN graph into a figure of the given format
 
@@ -15,8 +15,10 @@ def bpmn_diagram_to_figure(bpmn_graph, format, bpmn_aggreg_statistics=None):
     ----------
     bpmn_graph
         BPMN graph to render
-    format
+    image_format
         Render format
+    bpmn_aggreg_statistics
+        Statistics to represent on the BPMN diagram
 
     Returns
     ----------
@@ -56,7 +58,7 @@ def bpmn_diagram_to_figure(bpmn_graph, format, bpmn_aggreg_statistics=None):
         else:
             e = pydotplus.Edge(src=edge_source, dst=edge_target, label=edge[2].get(consts.Consts.name))
             graph.add_edge(e)
-    file_name = tempfile.NamedTemporaryFile(suffix='.' + format)
+    file_name = tempfile.NamedTemporaryFile(suffix='.' + image_format)
     file_name.close()
-    graph.write(file_name.name, format=format)
+    graph.write(file_name.name, format=image_format)
     return file_name

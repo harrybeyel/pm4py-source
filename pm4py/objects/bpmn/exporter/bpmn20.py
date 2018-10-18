@@ -1,8 +1,6 @@
-import logging
 import os
 
 import bpmn_python.bpmn_diagram_export as bpmn_exporter_internal
-import bpmn_python.bpmn_diagram_layouter as bpmn_layouter
 
 
 def export_bpmn(bpmn_graph, file_path):

@@ -25,9 +25,9 @@ def apply(bpmn_graph, parameters=None, bpmn_aggreg_statistics=None):
         parameters = {}
     del bpmn_aggreg_statistics
 
-    format = parameters["format"] if "format" in parameters else "png"
+    image_format = parameters["format"] if "format" in parameters else "png"
 
-    file_name = bpmn_diagram_to_figure(bpmn_graph, format, bpmn_aggreg_statistics=None)
+    file_name = bpmn_diagram_to_figure(bpmn_graph, image_format, bpmn_aggreg_statistics=None)
     return file_name
 
 
@@ -63,11 +63,11 @@ def apply_petri(net, initial_marking, final_marking, log=None, aggregated_statis
     del log
     del aggregated_statistics
 
-    format = parameters["format"] if "format" in parameters else "png"
+    image_format = parameters["format"] if "format" in parameters else "png"
 
     bpmn_graph, elements_correspondence, inv_elements_correspondence, el_corr_keys_map = bpmn_converter.apply(net,
                                                                                                               initial_marking,
                                                                                                               final_marking)
 
-    file_name = bpmn_diagram_to_figure(bpmn_graph, format, bpmn_aggreg_statistics=None)
+    file_name = bpmn_diagram_to_figure(bpmn_graph, image_format, bpmn_aggreg_statistics=None)
     return file_name

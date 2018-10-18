@@ -1,6 +1,7 @@
-from pm4py.visualization.bpmn.versions import wo_decoration, frequency, performance
 from pm4py.visualization.bpmn.util.bpmn_to_figure import bpmn_diagram_to_figure
 from pm4py.visualization.bpmn.util.save_view import view
+from pm4py.visualization.bpmn.util.save_view import save
+from pm4py.visualization.bpmn.versions import wo_decoration, frequency, performance
 
 WO_DECORATION = "wo_decoration"
 FREQUENCY_DECORATION = "frequency"
@@ -30,6 +31,9 @@ def apply(bpmn_graph, bpmn_aggreg_statistics=None, parameters=None, variant="wo_
     parameters
         Possible parameters, of the algorithm, including:
             format -> Format of the image to render (pdf, png, svg)
+    variant
+        Variant of the algorithm to use, possible values:
+            wo_decoration, frequency, performance, frequency_greedy, performance_greedy
 
     Returns
     ----------
@@ -60,8 +64,13 @@ def apply_petri(net, initial_marking, final_marking, log=None, aggregated_statis
         Possible parameters of the algorithm, including:
             format -> Format of the image to render (pdf, png, svg)
             aggregationMeasure -> Measure to use to aggregate statistics
-            pm4py.util.constants.PARAMETER_CONSTANT_ACTIVITY_KEY -> Specification of the activity key (if not concept:name)
-            pm4py.util.constants.PARAMETER_CONSTANT_TIMESTAMP_KEY -> Specification of the timestamp key (if not time:timestamp)
+            pm4py.util.constants.PARAMETER_CONSTANT_ACTIVITY_KEY -> Specification of the activity key
+            (if not concept:name)
+            pm4py.util.constants.PARAMETER_CONSTANT_TIMESTAMP_KEY -> Specification of the timestamp key
+            (if not time:timestamp)
+    variant
+        Variant of the algorithm to use, possible values:
+            wo_decoration, frequency, performance, frequency_greedy, performance_greedy
 
     Returns
     -----------
@@ -76,5 +85,10 @@ def dummy():
     """
     Dummy method
     """
-    bpmn_diagram_to_figure()
-    view()
+    bpmn_graph = None
+    format = None
+    bpmn_figure = None
+    path = None
+    bpmn_diagram_to_figure(bpmn_graph, format)
+    view(bpmn_figure)
+    save(bpmn_figure, path)

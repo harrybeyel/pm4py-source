@@ -31,9 +31,9 @@ def apply(bpmn_graph, parameters=None, bpmn_aggreg_statistics=None):
     if parameters is None:
         parameters = {}
 
-    format = parameters["format"] if "format" in parameters else "png"
+    image_format = parameters["format"] if "format" in parameters else "png"
 
-    file_name = bpmn_diagram_to_figure(bpmn_graph, format, bpmn_aggreg_statistics=bpmn_aggreg_statistics)
+    file_name = bpmn_diagram_to_figure(bpmn_graph, image_format, bpmn_aggreg_statistics=bpmn_aggreg_statistics)
     return file_name
 
 
@@ -69,7 +69,7 @@ def apply_petri(net, initial_marking, final_marking, log=None, aggregated_statis
     if parameters is None:
         parameters = {}
 
-    format = parameters["format"] if "format" in parameters else "png"
+    image_format = parameters["format"] if "format" in parameters else "png"
 
     bpmn_graph, elements_correspondence, inv_elements_correspondence, el_corr_keys_map = bpmn_converter.apply(net,
                                                                                                               initial_marking,
@@ -84,7 +84,7 @@ def apply_petri(net, initial_marking, final_marking, log=None, aggregated_statis
         bpmn_aggreg_statistics = convert_performance_map.convert_performance_map_to_bpmn(aggregated_statistics,
                                                                                          inv_elements_correspondence)
 
-    file_name = bpmn_diagram_to_figure(bpmn_graph, format, bpmn_aggreg_statistics=bpmn_aggreg_statistics)
+    file_name = bpmn_diagram_to_figure(bpmn_graph, image_format, bpmn_aggreg_statistics=bpmn_aggreg_statistics)
     return file_name
 
 
@@ -120,7 +120,7 @@ def apply_petri_greedy(net, initial_marking, final_marking, log=None, aggregated
     if parameters is None:
         parameters = {}
 
-    format = parameters["format"] if "format" in parameters else "png"
+    image_format = parameters["format"] if "format" in parameters else "png"
 
     bpmn_graph, elements_correspondence, inv_elements_correspondence, el_corr_keys_map = bpmn_converter.apply(net,
                                                                                                               initial_marking,
@@ -133,14 +133,14 @@ def apply_petri_greedy(net, initial_marking, final_marking, log=None, aggregated
         dfg = dfg_factory.apply(log, variant="performance")
         activities_count = attributes_filter.get_attribute_values(log, activity_key)
         spaths = vis_trans_shortest_paths.get_shortest_paths(net)
-        aggregated_statistics = vis_trans_shortest_paths.get_net_decorations_from_dfg_spaths_acticount(net, dfg, spaths,
-                                                                                                       activities_count,
-                                                                                                       variant="performance")
+        aggregated_statistics = vis_trans_shortest_paths.get_decorations_from_dfg_spaths_acticount(net, dfg, spaths,
+                                                                                                   activities_count,
+                                                                                                   variant="performance")
 
     bpmn_aggreg_statistics = None
     if aggregated_statistics is not None:
         bpmn_aggreg_statistics = convert_performance_map.convert_performance_map_to_bpmn(aggregated_statistics,
                                                                                          inv_elements_correspondence)
 
-    file_name = bpmn_diagram_to_figure(bpmn_graph, format, bpmn_aggreg_statistics=bpmn_aggreg_statistics)
+    file_name = bpmn_diagram_to_figure(bpmn_graph, image_format, bpmn_aggreg_statistics=bpmn_aggreg_statistics)
     return file_name
