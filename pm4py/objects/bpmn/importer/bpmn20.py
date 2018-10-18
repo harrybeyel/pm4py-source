@@ -1,5 +1,6 @@
-import bpmn_python.bpmn_diagram_rep as diagram
 import bpmn_python.bpmn_diagram_import as bpmn_importer_internal
+import bpmn_python.bpmn_diagram_rep as diagram
+
 
 def import_bpmn(file_path):
     """

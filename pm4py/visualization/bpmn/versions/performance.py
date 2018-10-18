@@ -1,12 +1,13 @@
-from pm4py.visualization.bpmn.util.bpmn_to_figure import bpmn_diagram_to_figure
-from pm4py.objects.conversion.petri_to_bpmn import factory as bpmn_converter
-from pm4py.visualization.petrinet.versions import token_decoration
-from pm4py.visualization.bpmn.util import convert_performance_map
+import pm4py
 from pm4py.algo.discovery.dfg import factory as dfg_factory
 from pm4py.algo.filtering.tracelog.attributes import attributes_filter
 from pm4py.objects import log as log_lib
+from pm4py.objects.conversion.petri_to_bpmn import factory as bpmn_converter
+from pm4py.visualization.bpmn.util import convert_performance_map
+from pm4py.visualization.bpmn.util.bpmn_to_figure import bpmn_diagram_to_figure
 from pm4py.visualization.petrinet.util import vis_trans_shortest_paths
-import pm4py
+from pm4py.visualization.petrinet.versions import token_decoration
+
 
 def apply(bpmn_graph, parameters=None, bpmn_aggreg_statistics=None):
     """
@@ -34,6 +35,7 @@ def apply(bpmn_graph, parameters=None, bpmn_aggreg_statistics=None):
 
     file_name = bpmn_diagram_to_figure(bpmn_graph, format, bpmn_aggreg_statistics=bpmn_aggreg_statistics)
     return file_name
+
 
 def apply_petri(net, initial_marking, final_marking, log=None, aggregated_statistics=None, parameters=None):
     """
@@ -74,7 +76,8 @@ def apply_petri(net, initial_marking, final_marking, log=None, aggregated_statis
                                                                                                               final_marking)
 
     if aggregated_statistics is None and log is not None:
-        aggregated_statistics = token_decoration.get_decorations(log, net, initial_marking, final_marking, parameters=parameters, measure="performance")
+        aggregated_statistics = token_decoration.get_decorations(log, net, initial_marking, final_marking,
+                                                                 parameters=parameters, measure="performance")
 
     bpmn_aggreg_statistics = None
     if aggregated_statistics is not None:
@@ -83,6 +86,7 @@ def apply_petri(net, initial_marking, final_marking, log=None, aggregated_statis
 
     file_name = bpmn_diagram_to_figure(bpmn_graph, format, bpmn_aggreg_statistics=bpmn_aggreg_statistics)
     return file_name
+
 
 def apply_petri_greedy(net, initial_marking, final_marking, log=None, aggregated_statistics=None, parameters=None):
     """
@@ -124,8 +128,6 @@ def apply_petri_greedy(net, initial_marking, final_marking, log=None, aggregated
 
     activity_key = parameters[
         pm4py.util.constants.PARAMETER_CONSTANT_ACTIVITY_KEY] if pm4py.util.constants.PARAMETER_CONSTANT_ACTIVITY_KEY in parameters else log_lib.util.xes.DEFAULT_NAME_KEY
-    timestamp_key = parameters[
-        pm4py.util.constants.PARAMETER_CONSTANT_TIMESTAMP_KEY] if pm4py.util.constants.PARAMETER_CONSTANT_TIMESTAMP_KEY in parameters else log_lib.util.xes.DEFAULT_TIMESTAMP_KEY
 
     if aggregated_statistics is None and log is not None:
         dfg = dfg_factory.apply(log, variant="performance")

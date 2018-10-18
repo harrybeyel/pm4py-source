@@ -1,5 +1,8 @@
+import os
 import shutil
-import subprocess, os, sys
+import subprocess
+import sys
+
 
 def view(bpmn_figure):
     """
@@ -35,6 +38,7 @@ def view(bpmn_figure):
             os.startfile(bpmn_figure)
         elif os.name == 'posix':  # For Linux, Mac, etc.
             subprocess.call(('xdg-open', bpmn_figure))
+
 
 def save(bpmn_figure, output_file_path):
     """

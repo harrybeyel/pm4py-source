@@ -1,12 +1,11 @@
-import matplotlib.pyplot as plt
-import networkx as nx
-import pydotplus
-import bpmn_python.bpmn_python_consts as consts
 import tempfile
-from pm4py.objects.conversion.petri_to_bpmn.util import constants
+
+import bpmn_python.bpmn_python_consts as consts
+import pydotplus
 
 EXCLUSIVE_OPERATOR = ""
 PARALLEL_OPERATOR = "+"
+
 
 def bpmn_diagram_to_figure(bpmn_graph, format, bpmn_aggreg_statistics=None):
     """
@@ -30,7 +29,6 @@ def bpmn_diagram_to_figure(bpmn_graph, format, bpmn_aggreg_statistics=None):
     g = bpmn_graph.diagram_graph
     graph = pydotplus.Dot()
     for node in g.nodes(data=True):
-        node_name = node[1]['node_name']
         if node[1].get(consts.Consts.type) == consts.Consts.task:
             if str(node[1]) in bpmn_aggreg_statistics:
                 node_statistics = bpmn_aggreg_statistics[str(node[1])]
@@ -52,12 +50,13 @@ def bpmn_diagram_to_figure(bpmn_graph, format, bpmn_aggreg_statistics=None):
 
         if str(edge[2]) in bpmn_aggreg_statistics:
             edge_statistics = bpmn_aggreg_statistics[str(edge[2])]
-            e = pydotplus.Edge(src=edge_source, dst=edge_target, label=edge_statistics['label'], penwidth=edge_statistics['penwidth'])
+            e = pydotplus.Edge(src=edge_source, dst=edge_target, label=edge_statistics['label'],
+                               penwidth=edge_statistics['penwidth'])
             graph.add_edge(e)
         else:
             e = pydotplus.Edge(src=edge_source, dst=edge_target, label=edge[2].get(consts.Consts.name))
             graph.add_edge(e)
-    file_name = tempfile.NamedTemporaryFile(suffix='.'+format)
+    file_name = tempfile.NamedTemporaryFile(suffix='.' + format)
     file_name.close()
     graph.write(file_name.name, format=format)
     return file_name

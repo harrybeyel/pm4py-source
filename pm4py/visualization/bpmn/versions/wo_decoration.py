@@ -1,5 +1,6 @@
-from pm4py.visualization.bpmn.util.bpmn_to_figure import bpmn_diagram_to_figure
 from pm4py.objects.conversion.petri_to_bpmn import factory as bpmn_converter
+from pm4py.visualization.bpmn.util.bpmn_to_figure import bpmn_diagram_to_figure
+
 
 def apply(bpmn_graph, parameters=None, bpmn_aggreg_statistics=None):
     """
@@ -22,6 +23,7 @@ def apply(bpmn_graph, parameters=None, bpmn_aggreg_statistics=None):
     """
     if parameters is None:
         parameters = {}
+    del bpmn_aggreg_statistics
 
     format = parameters["format"] if "format" in parameters else "png"
 
@@ -57,6 +59,9 @@ def apply_petri(net, initial_marking, final_marking, log=None, aggregated_statis
 
     if parameters is None:
         parameters = {}
+
+    del log
+    del aggregated_statistics
 
     format = parameters["format"] if "format" in parameters else "png"
 

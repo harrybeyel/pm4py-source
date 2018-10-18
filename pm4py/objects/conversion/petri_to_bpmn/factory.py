@@ -4,6 +4,7 @@ CLASSIC = "classic"
 
 VERSIONS = {CLASSIC: classic.apply}
 
+
 def apply(net, initial_marking, final_marking, parameters=None, variant="classic"):
     """
     Factory method to convert the Petri net to a BPMN graph

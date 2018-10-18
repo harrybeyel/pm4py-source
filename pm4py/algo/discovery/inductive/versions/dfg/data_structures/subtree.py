@@ -144,7 +144,8 @@ class Subtree(object):
         if len(self.activities_dir_list) > 0:
             set1.add(self.activities_dir_list[0][0])
         if len(self.activities_dir_list) > -1:
-            if not (self.activities_dir_list[0][0] in self.ingoing and self.activities_dir_list[-1][0] in self.ingoing[self.activities_dir_list[0][0]]):
+            if not (self.activities_dir_list[0][0] in self.ingoing and self.activities_dir_list[-1][0] in self.ingoing[
+                self.activities_dir_list[0][0]]):
                 set2.add(self.activities_dir_list[-1][0])
             else:
                 return [False, [], []]

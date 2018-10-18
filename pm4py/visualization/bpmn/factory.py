@@ -1,5 +1,6 @@
 from pm4py.visualization.bpmn.versions import wo_decoration, frequency, performance
-from pm4py.visualization.bpmn.util.save_view import *
+from pm4py.visualization.bpmn.util.bpmn_to_figure import bpmn_diagram_to_figure
+from pm4py.visualization.bpmn.util.save_view import view
 
 WO_DECORATION = "wo_decoration"
 FREQUENCY_DECORATION = "frequency"
@@ -11,8 +12,10 @@ VERSIONS = {WO_DECORATION: wo_decoration.apply, FREQUENCY_DECORATION: frequency.
             PERFORMANCE_DECORATION: performance.apply, FREQUENCY_GREEDY: frequency.apply,
             PERFORMANCE_GREEDY: performance.apply}
 
-VERSIONS_PETRI = {WO_DECORATION: wo_decoration.apply_petri, FREQUENCY_DECORATION: frequency.apply_petri, PERFORMANCE_DECORATION: performance.apply_petri,
+VERSIONS_PETRI = {WO_DECORATION: wo_decoration.apply_petri, FREQUENCY_DECORATION: frequency.apply_petri,
+                  PERFORMANCE_DECORATION: performance.apply_petri,
                   FREQUENCY_GREEDY: frequency.apply_petri_greedy, PERFORMANCE_GREEDY: performance.apply_petri_greedy}
+
 
 def apply(bpmn_graph, bpmn_aggreg_statistics=None, parameters=None, variant="wo_decoration"):
     """
@@ -35,7 +38,9 @@ def apply(bpmn_graph, bpmn_aggreg_statistics=None, parameters=None, variant="wo_
     """
     return VERSIONS[variant](bpmn_graph, bpmn_aggreg_statistics=bpmn_aggreg_statistics, parameters=parameters)
 
-def apply_petri(net, initial_marking, final_marking, log=None, aggregated_statistics=None, parameters=None, variant="wo_decoration"):
+
+def apply_petri(net, initial_marking, final_marking, log=None, aggregated_statistics=None, parameters=None,
+                variant="wo_decoration"):
     """
     Visualize a BPMN graph from a Petri net using the given parameters
 
@@ -63,4 +68,13 @@ def apply_petri(net, initial_marking, final_marking, log=None, aggregated_statis
     file_name
         Path of the figure in which the rendered BPMN has been saved
     """
-    return VERSIONS_PETRI[variant](net, initial_marking, final_marking, log=log, aggregated_statistics=aggregated_statistics, parameters=parameters)
+    return VERSIONS_PETRI[variant](net, initial_marking, final_marking, log=log,
+                                   aggregated_statistics=aggregated_statistics, parameters=parameters)
+
+
+def dummy():
+    """
+    Dummy method
+    """
+    bpmn_diagram_to_figure()
+    view()
