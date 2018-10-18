@@ -1,14 +1,19 @@
-from pm4py.objects.log.importer.xes import factory as xes_importer
-from pm4py.objects import petri
+import os
+import unittest
+
+from pm4py.algo.conformance.alignments.versions import state_equation_a_star
 from pm4py.algo.discovery.alpha import factory as alpha_factory
 from pm4py.algo.discovery.inductive.versions.dfg import dfg_only
+from pm4py.objects import petri
+from pm4py.objects.log.importer.xes import factory as xes_importer
 from tests.constants import INPUT_DATA_DIR
-from pm4py.algo.conformance.alignments.versions import state_equation_a_star
-import unittest
-import os
+
 
 class AlignmentTest(unittest.TestCase):
     def test_alignment_alpha(self):
+        # to avoid static method warnings in tests,
+        # that by construction of the unittest package have to be expressed in such way
+        self.dummy_variable = "dummy_value"
         trace_log = xes_importer.import_log(os.path.join(INPUT_DATA_DIR, "running-example.xes"))
         net, marking, fmarking = alpha_factory.apply(trace_log)
         final_marking = petri.petrinet.Marking()
@@ -25,6 +30,9 @@ class AlignmentTest(unittest.TestCase):
                 raise Exception("should be fit")
 
     def test_alignment_pnml(self):
+        # to avoid static method warnings in tests,
+        # that by construction of the unittest package have to be expressed in such way
+        self.dummy_variable = "dummy_value"
         trace_log = xes_importer.import_log(os.path.join(INPUT_DATA_DIR, "running-example.xes"))
         net, marking, final_marking = dfg_only.apply(trace_log, None)
         for trace in trace_log:

@@ -1,4 +1,5 @@
 from lxml import etree
+
 from pm4py.objects.log import log as log_instance
 from pm4py.objects.log import transform as log_transform
 from pm4py.objects.log.util import xes as xes_util
@@ -46,7 +47,8 @@ def get_xes_attr_value(attr_value, attr_type_xes):
     """
     if attr_type_xes == xes_util.TAG_DATE:
         default_date_repr = attr_value.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3] + attr_value.strftime('%z')[
-                                                                            0:3] + ":" + attr_value.strftime('%z')[3:5]
+                                                                               0:3] + ":" + attr_value.strftime('%z')[
+                                                                                            3:5]
         return default_date_repr.replace(" ", "T")
     return str(attr_value)
 
@@ -81,7 +83,7 @@ def export_extensions(log, root):
     for ext in log.extensions.keys():
         ext_value = log.extensions[ext]
         log_extension = etree.SubElement(root, xes_util.TAG_EXTENSION)
-        if not ext is None and not ext_value[xes_util.KEY_PREFIX] is None and not ext_value[xes_util.KEY_URI] is None:
+        if ext is not None and not ext_value[xes_util.KEY_PREFIX] is None and ext_value[xes_util.KEY_URI] is not None:
             log_extension.set(xes_util.KEY_NAME, ext)
             log_extension.set(xes_util.KEY_PREFIX, ext_value[xes_util.KEY_PREFIX])
             log_extension.set(xes_util.KEY_URI, ext_value[xes_util.KEY_URI])
@@ -256,6 +258,7 @@ def export_log_as_string(log, parameters=None):
     """
     if parameters is None:
         parameters = {}
+    del parameters
 
     # Gets the XML tree to export
     tree = export_log_tree(log)
@@ -279,6 +282,7 @@ def export_log(log, output_file_path, parameters=None):
     """
     if parameters is None:
         parameters = {}
+    del parameters
 
     # Gets the XML tree to export
     tree = export_log_tree(log)

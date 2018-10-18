@@ -1,5 +1,6 @@
-from pm4py.objects import log as log_lib
 import ciso8601
+
+from pm4py.objects import log as log_lib
 from pm4py.objects.log.util import compression
 
 
@@ -18,22 +19,22 @@ def import_log(filename, parameters=None):
             timestamp_key -> If sort is enabled, then sort the log by using this key
             reverse_sort -> Specify in which direction the log should be sorted
             index_trace_indexes -> Specify if trace indexes should be added as event attribute for each event
-            max_no_traces_to_import -> Specify the maximum number of traces to import from the log (read in order in the XML file)
+            max_no_traces_to_import -> Specify the maximum number of traces to import from the log
+            (read in order in the XML file)
 
     Returns
     -----------
     xes
         XES file
     """
-    parameters = None
     if parameters is None:
         parameters = {}
 
-    timestamp_sort=False
-    timestamp_key="time:timestamp"
-    reverse_sort=False
-    insert_trace_indexes=False
-    max_no_traces_to_import=1000000000
+    timestamp_sort = False
+    timestamp_key = "time:timestamp"
+    reverse_sort = False
+    insert_trace_indexes = False
+    max_no_traces_to_import = 1000000000
 
     if "timestamp_sort" in parameters:
         timestamp_sort = parameters["timestamp_sort"]
@@ -57,9 +58,9 @@ def import_log(filename, parameters=None):
         for line in f:
             content = line.split("\"")
             tag = content[0].split("<")[1]
-            if not trace is None:
-                if not event is None:
-                    if len(content)==5:
+            if trace is not None:
+                if event is not None:
+                    if len(content) == 5:
                         if tag.startswith("string"):
                             event[content[1]] = content[3]
                         elif tag.startswith("date"):
@@ -75,7 +76,7 @@ def import_log(filename, parameters=None):
                         event = None
                 elif tag.startswith("event"):
                     event = log_lib.log.Event()
-                elif len(content)==5:
+                elif len(content) == 5:
                     if tag.startswith("string"):
                         trace.attributes[content[1]] = content[3]
                     elif tag.startswith("date"):

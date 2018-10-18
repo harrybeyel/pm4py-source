@@ -3,6 +3,7 @@ from pm4py.algo.filtering.pandas.end_activities import end_activities_filter
 from pm4py.algo.filtering.pandas.start_activities import start_activities_filter
 from pm4py.algo.filtering.pandas.variants import variants_filter
 
+
 def apply_auto_filter(df, parameters=None):
     """
     Apply some filters to Pandas dataframe in order to get
@@ -17,9 +18,11 @@ def apply_auto_filter(df, parameters=None):
             case_id_glue -> Column where the case ID is present
             activity_key -> Column where the activity is present
             decreasingFactor -> Decreasing factor (provided to all algorithms)
-            enable_activities_filter -> Enables or disables auto filter on activities number (it is useful to disable if the dataframe
-                                        has been already filtered by activities number before). Default is True
-            enable_variants_filter -> Enables or disables auto filter on variants (that is slower than others). Default is False
+            enable_activities_filter -> Enables or disables auto filter on activities number
+            (it is useful to disable if the dataframe has been already filtered by activities number before).
+            Default is True
+            enable_variants_filter -> Enables or disables auto filter on variants (that is slower than others).
+            Default is False
             enable_start_activities_filter -> Enables or disables auto filter on start activities. Default is False
             enable_end_activities_filter -> Enables or disables auto filter on end activities. Default is True
 
@@ -32,11 +35,13 @@ def apply_auto_filter(df, parameters=None):
     if parameters is None:
         parameters = {}
 
-    enable_activities_filter = parameters["enable_activities_filter"] if "enable_activities_filter" in parameters else True
+    enable_activities_filter = parameters[
+        "enable_activities_filter"] if "enable_activities_filter" in parameters else True
     enable_variants_filter = parameters["enable_variants_filter"] if "enable_variants_filter" in parameters else False
-    enable_start_activities_filter = parameters["enable_start_activities_filter"] if "enable_start_activities_filter" in parameters else False
-    enable_end_activities_filter = parameters["enable_end_activities_filter"] if "enable_end_activities_filter" in parameters else True
-
+    enable_start_activities_filter = parameters[
+        "enable_start_activities_filter"] if "enable_start_activities_filter" in parameters else False
+    enable_end_activities_filter = parameters[
+        "enable_end_activities_filter"] if "enable_end_activities_filter" in parameters else True
 
     # list of filters that are applied:
     # - activities (if enabled)

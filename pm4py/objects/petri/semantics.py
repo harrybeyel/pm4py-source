@@ -24,6 +24,7 @@ def is_enabled(t, pn, m):
                 return False
     return True
 
+
 def execute(t, pn, m):
     """
     Executes a given transition in a given Petri net and Marking
@@ -53,14 +54,14 @@ def execute(t, pn, m):
 
     return m_out
 
-def weak_execute(t, pn, m):
+
+def weak_execute(t, m):
     """
     Execute a transition even if it is not fully enabled
 
     Parameters
     ----------
     :param t: transition to execute
-    :param pn: Petri net
     :param m: marking to use
 
     Returns

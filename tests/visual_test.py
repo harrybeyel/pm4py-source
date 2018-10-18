@@ -18,6 +18,9 @@ import os
 
 class VisualizationTest1(unittest.TestCase):
     def test_getdfgfreqvis_log(self):
+        # to avoid static method warnings in tests,
+        # that by construction of the unittest package have to be expressed in such way
+        self.dummy_variable = "dummy_value"
         log_path = os.path.join("input_data", "running-example.xes")
         log = xes_importer.import_log(log_path)
         variant = "frequency"
@@ -26,6 +29,9 @@ class VisualizationTest1(unittest.TestCase):
         del gviz
 
     def test_getdfgfreqvis_acticount(self):
+        # to avoid static method warnings in tests,
+        # that by construction of the unittest package have to be expressed in such way
+        self.dummy_variable = "dummy_value"
         log_path = os.path.join("input_data", "running-example.xes")
         log = xes_importer.import_log(log_path)
         variant = "frequency"
@@ -35,6 +41,9 @@ class VisualizationTest1(unittest.TestCase):
         del gviz
 
     def test_getdfgperfvis_log(self):
+        # to avoid static method warnings in tests,
+        # that by construction of the unittest package have to be expressed in such way
+        self.dummy_variable = "dummy_value"
         log_path = os.path.join("input_data", "running-example.xes")
         log = xes_importer.import_log(log_path)
         variant = "performance"
@@ -43,6 +52,9 @@ class VisualizationTest1(unittest.TestCase):
         del gviz
 
     def test_getpetrifreqvis_token(self):
+        # to avoid static method warnings in tests,
+        # that by construction of the unittest package have to be expressed in such way
+        self.dummy_variable = "dummy_value"
         log_path = os.path.join("input_data", "running-example.xes")
         log = xes_importer.import_log(log_path)
         net, initial_marking, final_marking = inductive_miner.apply(log)
@@ -51,6 +63,9 @@ class VisualizationTest1(unittest.TestCase):
         del gviz
 
     def test_getpetriperfvis_token(self):
+        # to avoid static method warnings in tests,
+        # that by construction of the unittest package have to be expressed in such way
+        self.dummy_variable = "dummy_value"
         log_path = os.path.join("input_data", "running-example.xes")
         log = xes_importer.import_log(log_path)
         variant = "performance"
@@ -59,6 +74,9 @@ class VisualizationTest1(unittest.TestCase):
         del gviz
 
     def test_getpetrifreqvis_greedy(self):
+        # to avoid static method warnings in tests,
+        # that by construction of the unittest package have to be expressed in such way
+        self.dummy_variable = "dummy_value"
         log_path = os.path.join("input_data", "running-example.xes")
         log = xes_importer.import_log(log_path)
         net, initial_marking, final_marking = inductive_miner.apply(log)
@@ -66,15 +84,18 @@ class VisualizationTest1(unittest.TestCase):
         dfg = dfg_factory.apply(log, variant=variant)
         activities_count = log_attribute_filter.get_attribute_values(log, "concept:name")
         spaths = vis_trans_shortest_paths.get_shortest_paths(net)
-        aggregated_statistics = vis_trans_shortest_paths.get_net_decorations_from_dfg_spaths_acticount(net, dfg, spaths,
-                                                                                                       activities_count,
-                                                                                                       variant=variant)
+        aggregated_statistics = vis_trans_shortest_paths.get_decorations_from_dfg_spaths_acticount(net, dfg, spaths,
+                                                                                                   activities_count,
+                                                                                                   variant=variant)
         parameters_vis = {"format": "svg"}
         gviz = petri_vis_factory.apply(net, initial_marking, final_marking, aggregated_statistics=aggregated_statistics,
                                        variant=variant, parameters=parameters_vis)
         del gviz
 
     def test_getpetriperfvis_greedy(self):
+        # to avoid static method warnings in tests,
+        # that by construction of the unittest package have to be expressed in such way
+        self.dummy_variable = "dummy_value"
         log_path = os.path.join("input_data", "running-example.xes")
         log = xes_importer.import_log(log_path)
         net, initial_marking, final_marking = inductive_miner.apply(log)
@@ -82,15 +103,18 @@ class VisualizationTest1(unittest.TestCase):
         dfg = dfg_factory.apply(log, variant=variant)
         activities_count = log_attribute_filter.get_attribute_values(log, "concept:name")
         spaths = vis_trans_shortest_paths.get_shortest_paths(net)
-        aggregated_statistics = vis_trans_shortest_paths.get_net_decorations_from_dfg_spaths_acticount(net, dfg, spaths,
-                                                                                                       activities_count,
-                                                                                                       variant=variant)
+        aggregated_statistics = vis_trans_shortest_paths.get_decorations_from_dfg_spaths_acticount(net, dfg, spaths,
+                                                                                                   activities_count,
+                                                                                                   variant=variant)
         parameters_vis = {"format": "svg"}
         gviz = petri_vis_factory.apply(net, initial_marking, final_marking, aggregated_statistics=aggregated_statistics,
                                        variant=variant, parameters=parameters_vis)
         del gviz
 
     def test_getdfgfreqvis_dataframe(self):
+        # to avoid static method warnings in tests,
+        # that by construction of the unittest package have to be expressed in such way
+        self.dummy_variable = "dummy_value"
         variant = "frequency"
         log_path = os.path.join("input_data", "running-example.csv")
         dataframe = csv_import_adapter.import_dataframe_from_path_wo_timeconversion(log_path)
@@ -101,6 +125,9 @@ class VisualizationTest1(unittest.TestCase):
         del gviz
 
     def test_getdfgperfvis_dataframe(self):
+        # to avoid static method warnings in tests,
+        # that by construction of the unittest package have to be expressed in such way
+        self.dummy_variable = "dummy_value"
         variant = "performance"
         log_path = os.path.join("input_data", "running-example.csv")
         dataframe = csv_import_adapter.import_dataframe_from_path_wo_timeconversion(log_path)
@@ -112,6 +139,9 @@ class VisualizationTest1(unittest.TestCase):
         del gviz
 
     def test_getpetrifreqvis_dataframe_greedy(self):
+        # to avoid static method warnings in tests,
+        # that by construction of the unittest package have to be expressed in such way
+        self.dummy_variable = "dummy_value"
         variant = "frequency"
         log_path = os.path.join("input_data", "running-example.csv")
         dataframe = csv_import_adapter.import_dataframe_from_path_wo_timeconversion(log_path)
@@ -120,16 +150,19 @@ class VisualizationTest1(unittest.TestCase):
         dfg_frequency = df_statistics.get_dfg_graph(dataframe, measure=variant)
         net, initial_marking, final_marking = inductive_miner.apply_dfg(dfg_frequency)
         spaths = vis_trans_shortest_paths.get_shortest_paths(net)
-        aggregated_statistics = vis_trans_shortest_paths.get_net_decorations_from_dfg_spaths_acticount(net,
-                                                                                                       dfg_frequency,
-                                                                                                       spaths,
-                                                                                                       activities_count,
-                                                                                                       variant=variant)
+        aggregated_statistics = vis_trans_shortest_paths.get_decorations_from_dfg_spaths_acticount(net,
+                                                                                                   dfg_frequency,
+                                                                                                   spaths,
+                                                                                                   activities_count,
+                                                                                                   variant=variant)
         gviz = petri_vis_factory.apply(net, initial_marking, final_marking, variant=variant,
                                        aggregated_statistics=aggregated_statistics)
         del gviz
 
     def test_getpetriperfvis_dataframe_greedy(self):
+        # to avoid static method warnings in tests,
+        # that by construction of the unittest package have to be expressed in such way
+        self.dummy_variable = "dummy_value"
         variant = "performance"
         log_path = os.path.join("input_data", "running-example.csv")
         dataframe = csv_import_adapter.import_dataframe_from_path_wo_timeconversion(log_path)
@@ -138,16 +171,19 @@ class VisualizationTest1(unittest.TestCase):
         [dfg_frequency, dfg_performance] = df_statistics.get_dfg_graph(dataframe, measure="both")
         net, initial_marking, final_marking = inductive_miner.apply_dfg(dfg_frequency)
         spaths = vis_trans_shortest_paths.get_shortest_paths(net)
-        aggregated_statistics = vis_trans_shortest_paths.get_net_decorations_from_dfg_spaths_acticount(net,
-                                                                                                       dfg_performance,
-                                                                                                       spaths,
-                                                                                                       activities_count,
-                                                                                                       variant=variant)
+        aggregated_statistics = vis_trans_shortest_paths.get_decorations_from_dfg_spaths_acticount(net,
+                                                                                                   dfg_performance,
+                                                                                                   spaths,
+                                                                                                   activities_count,
+                                                                                                   variant=variant)
         gviz = petri_vis_factory.apply(net, initial_marking, final_marking, variant=variant,
                                        aggregated_statistics=aggregated_statistics)
         del gviz
 
     def test_getpetrifreqvis_dataframe_convert_token(self):
+        # to avoid static method warnings in tests,
+        # that by construction of the unittest package have to be expressed in such way
+        self.dummy_variable = "dummy_value"
         variant = "frequency"
         log_path = os.path.join("input_data", "running-example.csv")
         dataframe = csv_import_adapter.import_dataframe_from_path_wo_timeconversion(log_path)
@@ -159,6 +195,9 @@ class VisualizationTest1(unittest.TestCase):
         del gviz
 
     def test_getpetriperfvis_dataframe_convert_token(self):
+        # to avoid static method warnings in tests,
+        # that by construction of the unittest package have to be expressed in such way
+        self.dummy_variable = "dummy_value"
         variant = "performance"
         log_path = os.path.join("input_data", "running-example.csv")
         dataframe = csv_import_adapter.import_dataframe_from_path_wo_timeconversion(log_path)
@@ -170,6 +209,9 @@ class VisualizationTest1(unittest.TestCase):
         del gviz
 
     def test_simple_view(self):
+        # to avoid static method warnings in tests,
+        # that by construction of the unittest package have to be expressed in such way
+        self.dummy_variable = "dummy_value"
         log_path = os.path.join("input_data", "receipt.xes")
         log = xes_importer.import_log(log_path)
         filtered_log = auto_filter.apply_auto_filter(log)

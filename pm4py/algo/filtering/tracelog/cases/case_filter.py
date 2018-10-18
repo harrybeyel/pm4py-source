@@ -1,6 +1,7 @@
 from pm4py.objects.log.log import TraceLog
-from pm4py.objects.log.util import xes
-from pm4py.util import constants
+from pm4py.objects.log.util.xes import DEFAULT_TIMESTAMP_KEY
+from pm4py.util.constants import PARAMETER_CONSTANT_TIMESTAMP_KEY
+
 
 def filter_on_case_performance(trace_log, inf_perf, sup_perf, parameters=None):
     """
@@ -25,9 +26,10 @@ def filter_on_case_performance(trace_log, inf_perf, sup_perf, parameters=None):
     if parameters is None:
         parameters = {}
     timestamp_key = parameters[
-        constants.PARAMETER_CONSTANT_TIMESTAMP_KEY] if constants.PARAMETER_CONSTANT_TIMESTAMP_KEY in parameters else xes.DEFAULT_TIMESTAMP_KEY
+        PARAMETER_CONSTANT_TIMESTAMP_KEY] if PARAMETER_CONSTANT_TIMESTAMP_KEY in parameters else DEFAULT_TIMESTAMP_KEY
     filtered_log = TraceLog([trace for trace in trace_log if satisfy_perf(trace, inf_perf, sup_perf, timestamp_key)])
     return filtered_log
+
 
 def filter_on_ncases(trace_log, max_no_cases=1000):
     """
@@ -47,6 +49,7 @@ def filter_on_ncases(trace_log, max_no_cases=1000):
     """
     filtered_log = TraceLog(trace_log[:min(len(trace_log), max_no_cases)])
     return filtered_log
+
 
 def filter_on_case_size(trace_log, min_case_size=2, max_case_size=None):
     """
@@ -71,6 +74,7 @@ def filter_on_case_size(trace_log, min_case_size=2, max_case_size=None):
     else:
         filtered_log = TraceLog([trace for trace in trace_log if len(trace) >= min_case_size])
     return filtered_log
+
 
 def satisfy_perf(trace, inf_perf, sup_perf, timestamp_key):
     """
@@ -97,8 +101,14 @@ def satisfy_perf(trace, inf_perf, sup_perf, timestamp_key):
         return inf_perf <= trace_duration <= sup_perf
     return False
 
+
 def apply(df, parameters=None):
+    del df
+    del parameters
     raise NotImplementedError("apply method not available for case filter")
 
+
 def apply_auto_filter(df, parameters=None):
+    del df
+    del parameters
     raise NotImplementedError("apply_auto_filter method not available for case filter")

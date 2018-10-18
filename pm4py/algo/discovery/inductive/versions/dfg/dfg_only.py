@@ -1,14 +1,15 @@
-from pm4py.algo.discovery.dfg.versions import native as dfg_inst
 import sys
 from collections import Counter
+
 from pm4py import util as pmutil
-from pm4py.objects.log.util import xes as xes_util
 from pm4py.algo.conformance.tokenreplay import factory as token_replay
+from pm4py.algo.discovery.dfg.versions import native as dfg_inst
 from pm4py.algo.discovery.inductive.util import petri_cleaning, shared_constants
 from pm4py.algo.discovery.inductive.util.petri_el_count import Counts
 from pm4py.algo.discovery.inductive.versions.dfg.data_structures.subtree import Subtree
 from pm4py.algo.discovery.inductive.versions.dfg.util import get_tree_repr
 from pm4py.objects.conversion.tree_to_petri import factory as tree_to_petri
+from pm4py.objects.log.util import xes as xes_util
 
 sys.setrecursionlimit(100000)
 
@@ -23,7 +24,8 @@ def apply(trace_log, parameters):
         Trace log
     parameters
         Parameters of the algorithm, including:
-            pmutil.constants.PARAMETER_CONSTANT_ACTIVITY_KEY -> attribute of the log to use as activity name (default concept:name)
+            pmutil.constants.PARAMETER_CONSTANT_ACTIVITY_KEY -> attribute of the log to use as activity name
+            (default concept:name)
 
     Returns
     -----------
@@ -36,7 +38,7 @@ def apply(trace_log, parameters):
     """
     if parameters is None:
         parameters = {}
-    if not pmutil.constants.PARAMETER_CONSTANT_ACTIVITY_KEY in parameters:
+    if pmutil.constants.PARAMETER_CONSTANT_ACTIVITY_KEY not in parameters:
         parameters[pmutil.constants.PARAMETER_CONSTANT_ACTIVITY_KEY] = xes_util.DEFAULT_NAME_KEY
     activity_key = parameters[pmutil.constants.PARAMETER_CONSTANT_ACTIVITY_KEY]
     # apply the reduction by default only on very small logs
@@ -69,7 +71,8 @@ def apply_tree(trace_log, parameters):
         Trace log
     parameters
         Parameters of the algorithm, including:
-            pmutil.constants.PARAMETER_CONSTANT_ACTIVITY_KEY -> attribute of the log to use as activity name (default concept:name)
+            pmutil.constants.PARAMETER_CONSTANT_ACTIVITY_KEY -> attribute of the log to use as activity name
+            (default concept:name)
 
     Returns
     ----------
@@ -78,7 +81,7 @@ def apply_tree(trace_log, parameters):
     """
     if parameters is None:
         parameters = {}
-    if not pmutil.constants.PARAMETER_CONSTANT_ACTIVITY_KEY in parameters:
+    if pmutil.constants.PARAMETER_CONSTANT_ACTIVITY_KEY not in parameters:
         parameters[pmutil.constants.PARAMETER_CONSTANT_ACTIVITY_KEY] = xes_util.DEFAULT_NAME_KEY
     activity_key = parameters[pmutil.constants.PARAMETER_CONSTANT_ACTIVITY_KEY]
 
@@ -99,7 +102,8 @@ def apply_dfg(dfg, parameters):
         Directly-Follows graph
     parameters
         Parameters of the algorithm, including:
-            pmutil.constants.PARAMETER_CONSTANT_ACTIVITY_KEY -> attribute of the log to use as activity name (default concept:name)
+            pmutil.constants.PARAMETER_CONSTANT_ACTIVITY_KEY -> attribute of the log to use as activity name
+            (default concept:name)
 
     Returns
     -----------
@@ -126,7 +130,8 @@ def apply_tree_dfg(dfg, parameters):
         Directly-follows graph
     parameters
         Parameters of the algorithm, including:
-            pmutil.constants.PARAMETER_CONSTANT_ACTIVITY_KEY -> attribute of the log to use as activity name (default concept:name)
+            pmutil.constants.PARAMETER_CONSTANT_ACTIVITY_KEY -> attribute of the log to use as activity name
+            (default concept:name)
 
     Returns
     ----------

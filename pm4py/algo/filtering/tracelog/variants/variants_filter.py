@@ -1,7 +1,8 @@
-from pm4py.objects.log.log import TraceLog
-from pm4py.objects.log.util import xes
-from pm4py.util import constants
 from pm4py.algo.filtering.common import filtering_constants
+from pm4py.objects.log.log import TraceLog
+from pm4py.objects.log.util.xes import DEFAULT_NAME_KEY
+from pm4py.util.constants import PARAMETER_CONSTANT_ACTIVITY_KEY
+
 
 def apply(trace_log, admitted_variants, parameters=None):
     """
@@ -25,10 +26,11 @@ def apply(trace_log, admitted_variants, parameters=None):
     variants = get_variants(trace_log, parameters=parameters)
     trace_log = TraceLog()
     for variant in variants:
-        if (positive and variant in admitted_variants) or (not positive and not variant in admitted_variants):
+        if (positive and variant in admitted_variants) or (not positive and variant not in admitted_variants):
             for trace in variants[variant]:
                 trace_log.append(trace)
     return trace_log
+
 
 def get_variants(trace_log, parameters=None):
     """
@@ -53,6 +55,7 @@ def get_variants(trace_log, parameters=None):
 
     return convert_variants_trace_idx_to_trace_obj(trace_log, variants_trace_idx)
 
+
 def get_variants_from_log_trace_idx(trace_log, parameters=None):
     """
     Gets a dictionary whose key is the variant and as value there
@@ -74,16 +77,18 @@ def get_variants_from_log_trace_idx(trace_log, parameters=None):
     if parameters is None:
         parameters = {}
 
-    attribute_key = parameters[constants.PARAMETER_CONSTANT_ACTIVITY_KEY] if constants.PARAMETER_CONSTANT_ACTIVITY_KEY in parameters else xes.DEFAULT_NAME_KEY
+    attribute_key = parameters[
+        PARAMETER_CONSTANT_ACTIVITY_KEY] if PARAMETER_CONSTANT_ACTIVITY_KEY in parameters else DEFAULT_NAME_KEY
 
     variants = {}
     for trace_idx, trace in enumerate(trace_log):
         variant = ",".join([x[attribute_key] for x in trace if attribute_key in x])
-        if not variant in variants:
+        if variant not in variants:
             variants[variant] = []
         variants[variant].append(trace_idx)
 
     return variants
+
 
 def convert_variants_trace_idx_to_trace_obj(log, variants_trace_idx):
     """
@@ -110,6 +115,7 @@ def convert_variants_trace_idx_to_trace_obj(log, variants_trace_idx):
 
     return variants
 
+
 def get_variants_sorted_by_count(variants):
     """
     From the dictionary of variants returns an ordered list of variants
@@ -130,6 +136,7 @@ def get_variants_sorted_by_count(variants):
         var_count.append([variant, len(variants[variant])])
     var_count = sorted(var_count, key=lambda x: x[1], reverse=True)
     return var_count
+
 
 def filter_log_by_variants_percentage(trace_log, variants, variants_percentage=0.0):
     """
@@ -165,6 +172,7 @@ def filter_log_by_variants_percentage(trace_log, variants, variants_percentage=0
 
     return filtered_log
 
+
 def find_auto_threshold(trace_log, variants, decreasing_factor):
     """
     Find automatically variants filtering threshold
@@ -177,7 +185,8 @@ def find_auto_threshold(trace_log, variants, decreasing_factor):
     variants
         Dictionary with variant as the key and the list of traces as the value
     decreasing_factor
-        Decreasing factor (stops the algorithm when the next variant by occurrence is below this factor in comparison to previous)
+        Decreasing factor (stops the algorithm when the next variant by occurrence is below this factor
+        in comparison to previous)
     
     Returns
     ----------
@@ -187,7 +196,7 @@ def find_auto_threshold(trace_log, variants, decreasing_factor):
     no_of_traces = len(trace_log)
     variant_count = get_variants_sorted_by_count(variants)
     already_added_sum = 0
-    
+
     prev_var_count = -1
     percentage_already_added = 0
     for i in range(len(variant_count)):
@@ -196,8 +205,9 @@ def find_auto_threshold(trace_log, variants, decreasing_factor):
         if already_added_sum == 0 or varcount > decreasing_factor * prev_var_count:
             already_added_sum = already_added_sum + varcount
         prev_var_count = varcount
-    
+
     return percentage_already_added
+
 
 def apply_auto_filter(trace_log, variants=None, parameters=None):
     """
@@ -212,7 +222,8 @@ def apply_auto_filter(trace_log, variants=None, parameters=None):
     parameters
         Parameters of the algorithm, including:
             activity_key -> Key that identifies the activity
-            decreasingFactor -> Decreasing factor (stops the algorithm when the next variant by occurrence is below this factor in comparison to previous)
+            decreasingFactor -> Decreasing factor (stops the algorithm when the next variant by occurrence is below
+            this factor in comparison to previous)
     
     Returns
     ----------
@@ -222,10 +233,12 @@ def apply_auto_filter(trace_log, variants=None, parameters=None):
     if parameters is None:
         parameters = {}
 
-    attribute_key = parameters[constants.PARAMETER_CONSTANT_ACTIVITY_KEY] if constants.PARAMETER_CONSTANT_ACTIVITY_KEY in parameters else xes.DEFAULT_NAME_KEY
-    decreasing_factor = parameters["decreasingFactor"] if "decreasingFactor" in parameters else filtering_constants.DECREASING_FACTOR
+    attribute_key = parameters[
+        PARAMETER_CONSTANT_ACTIVITY_KEY] if PARAMETER_CONSTANT_ACTIVITY_KEY in parameters else DEFAULT_NAME_KEY
+    decreasing_factor = parameters[
+        "decreasingFactor"] if "decreasingFactor" in parameters else filtering_constants.DECREASING_FACTOR
 
-    parameters_variants = {constants.PARAMETER_CONSTANT_ACTIVITY_KEY: attribute_key}
+    parameters_variants = {PARAMETER_CONSTANT_ACTIVITY_KEY: attribute_key}
     if variants is None:
         variants = get_variants(trace_log, parameters=parameters_variants)
     variants_percentage = find_auto_threshold(trace_log, variants, decreasing_factor)

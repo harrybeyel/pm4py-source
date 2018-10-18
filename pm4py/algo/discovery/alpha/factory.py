@@ -1,10 +1,11 @@
-from pm4py.objects.log.util import xes as xes_util
-from pm4py.algo.discovery.alpha import versions
 from pm4py import util as pmutil
+from pm4py.algo.discovery.alpha import versions
+from pm4py.objects.log.util import xes as xes_util
 
 ALPHA_VERSION_CLASSIC = 'classic'
 VERSIONS = {ALPHA_VERSION_CLASSIC: versions.classic.apply}
 VERSIONS_DFG = {ALPHA_VERSION_CLASSIC: versions.classic.apply_dfg}
+
 
 def apply(log, parameters=None, variant=ALPHA_VERSION_CLASSIC):
     """
@@ -31,9 +32,10 @@ def apply(log, parameters=None, variant=ALPHA_VERSION_CLASSIC):
     """
     if parameters is None:
         parameters = {}
-    if not pmutil.constants.PARAMETER_CONSTANT_ACTIVITY_KEY in parameters:
+    if pmutil.constants.PARAMETER_CONSTANT_ACTIVITY_KEY not in parameters:
         parameters[pmutil.constants.PARAMETER_CONSTANT_ACTIVITY_KEY] = xes_util.DEFAULT_NAME_KEY
     return VERSIONS[variant](log, parameters)
+
 
 def apply_dfg(dfg, parameters=None, variant=ALPHA_VERSION_CLASSIC):
     """
@@ -60,6 +62,6 @@ def apply_dfg(dfg, parameters=None, variant=ALPHA_VERSION_CLASSIC):
     """
     if parameters is None:
         parameters = {}
-    if not pmutil.constants.PARAMETER_CONSTANT_ACTIVITY_KEY in parameters:
+    if pmutil.constants.PARAMETER_CONSTANT_ACTIVITY_KEY not in parameters:
         parameters[pmutil.constants.PARAMETER_CONSTANT_ACTIVITY_KEY] = xes_util.DEFAULT_NAME_KEY
     return VERSIONS_DFG[variant](dfg, parameters)

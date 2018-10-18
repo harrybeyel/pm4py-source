@@ -1,4 +1,3 @@
-
 class IncidenceMatrix(object):
 
     def __init__(self, net):
@@ -20,6 +19,7 @@ class IncidenceMatrix(object):
         return self.__place_indices
 
     def __construct_matrix(self, net):
+        self.matrix_built = True
         p_index, t_index = {}, {}
         for p in net.places:
             p_index[p] = len(p_index)

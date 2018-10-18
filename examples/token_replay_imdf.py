@@ -1,8 +1,8 @@
+from pm4py.algo.conformance.tokenreplay.versions import token_replay
 from pm4py.algo.discovery.inductive import factory as inductive_factory
 from pm4py.objects.log.importer.xes import factory as xes_importer
 from pm4py.visualization.petrinet import factory as pn_vis_factory
-from pm4py.algo.conformance.tokenreplay.versions import token_replay
-import time
+
 
 def execute_script():
     log_path = "..\\tests\\input_data\\running-example.xes"
@@ -15,7 +15,6 @@ def execute_script():
         print("final marking " + place.name)
     gviz = pn_vis_factory.apply(net, marking, final_marking, parameters={"format": "svg"})
     pn_vis_factory.view(gviz)
-    time0 = time.time()
     print("started token replay")
     aligned_traces = token_replay.apply(log, net, marking, final_marking)
     fit_traces = [x for x in aligned_traces if x['trace_is_fit']]

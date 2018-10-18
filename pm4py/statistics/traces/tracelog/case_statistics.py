@@ -1,6 +1,9 @@
-from pm4py.util import constants
-from pm4py.objects.log.util import xes
 from pm4py.algo.filtering.tracelog.variants import variants_filter
+from pm4py.objects.log.util.xes import DEFAULT_TIMESTAMP_KEY
+from pm4py.objects.log.util.xes import DEFAULT_TRACEID_KEY
+from pm4py.util.constants import PARAMETER_CONSTANT_CASEID_KEY
+from pm4py.util.constants import PARAMETER_CONSTANT_TIMESTAMP_KEY
+
 
 def get_variant_statistics(trace_log, parameters=None):
     """
@@ -26,13 +29,15 @@ def get_variant_statistics(trace_log, parameters=None):
     if parameters is None:
         parameters = {}
     max_variants_to_return = parameters["max_variants_to_return"] if "max_variants_to_return" in parameters else None
-    variants = parameters["variants"] if "variants" in parameters else variants_filter.get_variants(trace_log, parameters=parameters)
+    varnt = parameters["variants"] if "variants" in parameters else variants_filter.get_variants(trace_log,
+                                                                                                 parameters=parameters)
     variants_list = []
-    for variant in variants:
-        variants_list.append({"variant": variant, "count": len(variants[variant])})
+    for var in varnt:
+        variants_list.append({"variant": var, "count": len(varnt[var])})
     if max_variants_to_return:
         variants_list = variants_list[:min(len(variants_list), max_variants_to_return)]
     return variants_list
+
 
 def get_cases_description(trace_log, parameters=None):
     """
@@ -52,7 +57,8 @@ def get_cases_description(trace_log, parameters=None):
             1 -> start time
             2 -> end time
             3 -> difference
-        sort_ascending -> Set sort direction (boolean; it true then the sort direction is ascending, otherwise descending)
+        sort_ascending -> Set sort direction (boolean; it true then the sort direction is ascending, otherwise
+        descending)
         max_ret_cases -> Set the maximum number of returned traces
 
     Returns
@@ -64,8 +70,10 @@ def get_cases_description(trace_log, parameters=None):
     if parameters is None:
         parameters = {}
 
-    case_id_key = parameters[constants.PARAMETER_CONSTANT_CASEID_KEY] if constants.PARAMETER_CONSTANT_CASEID_KEY in parameters else xes.DEFAULT_TRACEID_KEY
-    timestamp_key = parameters[constants.PARAMETER_CONSTANT_TIMESTAMP_KEY] if constants.PARAMETER_CONSTANT_TIMESTAMP_KEY in parameters else xes.DEFAULT_TIMESTAMP_KEY
+    case_id_key = parameters[
+        PARAMETER_CONSTANT_CASEID_KEY] if PARAMETER_CONSTANT_CASEID_KEY in parameters else DEFAULT_TRACEID_KEY
+    timestamp_key = parameters[
+        PARAMETER_CONSTANT_TIMESTAMP_KEY] if PARAMETER_CONSTANT_TIMESTAMP_KEY in parameters else DEFAULT_TIMESTAMP_KEY
     enable_sort = parameters["enable_sort"] if "enable_sort" in parameters else True
     sort_by_index = parameters["sort_by_index"] if "sort_by_index" in parameters else 0
     sort_ascending = parameters["sort_ascending"] if "sort_ascending" in parameters else "ascending"
@@ -94,7 +102,8 @@ def get_cases_description(trace_log, parameters=None):
 
     return statistics_dict
 
-def index_tracelog_accordingto_caseid(log, case_id, parameters=None):
+
+def index_tracelog_caseid(log, parameters=None):
     """
     Index a trace log according to case ID
 
@@ -102,8 +111,6 @@ def index_tracelog_accordingto_caseid(log, case_id, parameters=None):
     -----------
     log
         Trace log object
-    case_id
-        Required case ID
     parameters
         Possible parameters of the algorithm, including:
             case id key -> Trace attribute in which the Case ID is contained
@@ -117,7 +124,8 @@ def index_tracelog_accordingto_caseid(log, case_id, parameters=None):
     if parameters is None:
         parameters = {}
 
-    case_id_key = parameters[constants.PARAMETER_CONSTANT_CASEID_KEY] if constants.PARAMETER_CONSTANT_CASEID_KEY in parameters else xes.DEFAULT_TRACEID_KEY
+    case_id_key = parameters[
+        PARAMETER_CONSTANT_CASEID_KEY] if PARAMETER_CONSTANT_CASEID_KEY in parameters else DEFAULT_TRACEID_KEY
     indexed_log = {}
 
     for trace in log:
@@ -125,6 +133,7 @@ def index_tracelog_accordingto_caseid(log, case_id, parameters=None):
         indexed_log[trace_id] = trace
 
     return indexed_log
+
 
 def get_events(log, case_id, parameters=None):
     """
@@ -148,7 +157,8 @@ def get_events(log, case_id, parameters=None):
     """
     if parameters is None:
         parameters = {}
-    indexed_log = parameters["indexed_log"] if "indexed_log" in parameters else index_tracelog_accordingto_caseid(log, parameters)
+    indexed_log = parameters["indexed_log"] if "indexed_log" in parameters else index_tracelog_caseid(log,
+                                                                                                      parameters)
     list_eve = []
     for event in indexed_log[case_id]:
         list_eve.append(dict(event))

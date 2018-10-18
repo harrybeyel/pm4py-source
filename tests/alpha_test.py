@@ -1,19 +1,25 @@
-from pm4py.objects.log.importer.csv import factory as csv_importer
-from pm4py.objects.log.importer.xes import factory as xes_importer
+import logging
+import os
+import unittest
+
 import pm4py.objects.log.transform as log_transform
-from pm4py.algo.discovery.alpha import factory as alpha_factory
-from pm4py.visualization.petrinet.common import visualize as pn_viz
 from pm4py.algo.conformance.tokenreplay.versions import token_replay
 from pm4py.algo.conformance.tokenreplay.versions.token_replay import NoConceptNameException
+from pm4py.algo.discovery.alpha import factory as alpha_factory
 from pm4py.objects import petri
+from pm4py.objects.log.importer.csv import factory as csv_importer
+from pm4py.objects.log.importer.xes import factory as xes_importer
 from pm4py.objects.petri.exporter import pnml as petri_exporter
+from pm4py.visualization.petrinet.common import visualize as pn_viz
 from tests.constants import INPUT_DATA_DIR, OUTPUT_DATA_DIR, PROBLEMATIC_XES_DIR
-import logging
-import unittest
-import os
+
 
 class AlphaMinerTest(unittest.TestCase):
     def obtainPetriNetThroughAlphaMiner(self, log_name):
+        # to avoid static method warnings in tests,
+        # that by construction of the unittest package have to be expressed in such way
+        self.dummy_variable = "dummy_value"
+
         if ".xes" in log_name:
             trace_log = xes_importer.import_log(log_name)
         else:
@@ -23,6 +29,9 @@ class AlphaMinerTest(unittest.TestCase):
         return trace_log, net, marking, fmarking
 
     def test_applyAlphaMinerToXES(self):
+        # to avoid static method warnings in tests,
+        # that by construction of the unittest package have to be expressed in such way
+        self.dummy_variable = "dummy_value"
         # calculate and compare Petri nets obtained on the same log to verify that instances
         # are working correctly
         log1, net1, marking1, fmarking1 = self.obtainPetriNetThroughAlphaMiner(
@@ -49,6 +58,9 @@ class AlphaMinerTest(unittest.TestCase):
         self.assertEqual(aligned_traces, aligned_traces)
 
     def test_applyAlphaMinerToCSV(self):
+        # to avoid static method warnings in tests,
+        # that by construction of the unittest package have to be expressed in such way
+        self.dummy_variable = "dummy_value"
         # calculate and compare Petri nets obtained on the same log to verify that instances
         # are working correctly
         log1, net1, marking1, fmarking1 = self.obtainPetriNetThroughAlphaMiner(
@@ -74,6 +86,9 @@ class AlphaMinerTest(unittest.TestCase):
         self.assertEqual(aligned_traces, aligned_traces)
 
     def test_alphaMinerVisualizationFromXES(self):
+        # to avoid static method warnings in tests,
+        # that by construction of the unittest package have to be expressed in such way
+        self.dummy_variable = "dummy_value"
         log, net, marking, fmarking = self.obtainPetriNetThroughAlphaMiner(
             os.path.join(INPUT_DATA_DIR, "running-example.xes"))
         log.sort()
@@ -91,6 +106,9 @@ class AlphaMinerTest(unittest.TestCase):
         self.assertEqual(aligned_traces, aligned_traces)
 
     def test_applyAlphaMinerToProblematicLogs(self):
+        # to avoid static method warnings in tests,
+        # that by construction of the unittest package have to be expressed in such way
+        self.dummy_variable = "dummy_value"
         logs = os.listdir(PROBLEMATIC_XES_DIR)
         for log in logs:
             try:

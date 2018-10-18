@@ -1,8 +1,13 @@
-from pm4py.objects.log.util import xes
-from pm4py.util import constants
-from pm4py.algo.filtering.common import filtering_constants
 from pm4py.algo.filtering.common.attributes import attributes_common
-from pm4py.algo.filtering.pandas import pd_filtering_constants
+from pm4py.algo.filtering.common.filtering_constants import CASE_CONCEPT_NAME
+from pm4py.algo.filtering.common.filtering_constants import DECREASING_FACTOR
+from pm4py.algo.filtering.pandas.pd_filtering_constants import MAX_NO_OF_ACTIVITIES_TO_RETAIN_FOR_DIAGRAM
+from pm4py.algo.filtering.pandas.pd_filtering_constants import MIN_NO_OF_ACTIVITIES_TO_RETAIN_FOR_DIAGRAM
+from pm4py.objects.log.util.xes import DEFAULT_NAME_KEY
+from pm4py.util.constants import PARAMETER_CONSTANT_ACTIVITY_KEY
+from pm4py.util.constants import PARAMETER_CONSTANT_ATTRIBUTE_KEY
+from pm4py.util.constants import PARAMETER_CONSTANT_CASEID_KEY
+
 
 def apply_events(df, values, parameters=None):
     """
@@ -17,7 +22,8 @@ def apply_events(df, values, parameters=None):
     parameters
         Possible parameters of the algorithm, including:
             attribute_key -> Attribute we want to filter
-            positive -> Specifies if the filter should be applied including traces (positive=True) or excluding traces (positive=False)
+            positive -> Specifies if the filter should be applied including traces (positive=True) or
+            excluding traces (positive=False)
     Returns
     ----------
     df
@@ -25,12 +31,14 @@ def apply_events(df, values, parameters=None):
     """
     if parameters is None:
         parameters = {}
-    attribute_key = parameters[constants.PARAMETER_CONSTANT_ATTRIBUTE_KEY] if constants.PARAMETER_CONSTANT_ATTRIBUTE_KEY in parameters else xes.DEFAULT_NAME_KEY
+    attribute_key = parameters[
+        PARAMETER_CONSTANT_ATTRIBUTE_KEY] if PARAMETER_CONSTANT_ATTRIBUTE_KEY in parameters else DEFAULT_NAME_KEY
     positive = parameters["positive"] if "positive" in parameters else True
     if positive:
         return df[df[attribute_key].isin(values)]
     else:
         return df[~df[attribute_key].isin(values)]
+
 
 def apply(df, values, parameters=None):
     """
@@ -46,7 +54,8 @@ def apply(df, values, parameters=None):
         Possible parameters of the algorithm, including:
             case_id_glue -> Case ID column in the dataframe
             attribute_key -> Attribute we want to filter
-            positive -> Specifies if the filter should be applied including traces (positive=True) or excluding traces (positive=False)
+            positive -> Specifies if the filter should be applied including traces (positive=True) or
+            excluding traces (positive=False)
     Returns
     ----------
     df
@@ -55,11 +64,15 @@ def apply(df, values, parameters=None):
     if parameters is None:
         parameters = {}
 
-    case_id_glue = parameters[constants.PARAMETER_CONSTANT_CASEID_KEY] if constants.PARAMETER_CONSTANT_CASEID_KEY in parameters else filtering_constants.CASE_CONCEPT_NAME
-    attribute_key = parameters[constants.PARAMETER_CONSTANT_ATTRIBUTE_KEY] if constants.PARAMETER_CONSTANT_ATTRIBUTE_KEY in parameters else xes.DEFAULT_NAME_KEY
+    case_id_glue = parameters[
+        PARAMETER_CONSTANT_CASEID_KEY] if PARAMETER_CONSTANT_CASEID_KEY in parameters else CASE_CONCEPT_NAME
+    attribute_key = parameters[
+        PARAMETER_CONSTANT_ATTRIBUTE_KEY] if PARAMETER_CONSTANT_ATTRIBUTE_KEY in parameters else DEFAULT_NAME_KEY
     positive = parameters["positive"] if "positive" in parameters else True
 
-    return filter_df_on_attribute_values(df, values, case_id_glue=case_id_glue, attribute_key=attribute_key, positive=positive)
+    return filter_df_on_attribute_values(df, values, case_id_glue=case_id_glue, attribute_key=attribute_key,
+                                         positive=positive)
+
 
 def apply_auto_filter(df, parameters=None):
     """
@@ -81,14 +94,19 @@ def apply_auto_filter(df, parameters=None):
     """
     if parameters is None:
         parameters = {}
-    activity_key = parameters[constants.PARAMETER_CONSTANT_ACTIVITY_KEY] if constants.PARAMETER_CONSTANT_ACTIVITY_KEY in parameters else xes.DEFAULT_NAME_KEY
-    decreasing_factor = parameters["decreasingFactor"] if "decreasingFactor" in parameters else filtering_constants.DECREASING_FACTOR
+    activity_key = parameters[
+        PARAMETER_CONSTANT_ACTIVITY_KEY] if PARAMETER_CONSTANT_ACTIVITY_KEY in parameters else DEFAULT_NAME_KEY
+    decreasing_factor = parameters[
+        "decreasingFactor"] if "decreasingFactor" in parameters else DECREASING_FACTOR
 
     activities = get_attribute_values(df, activity_key)
     alist = attributes_common.get_sorted_attributes_list(activities)
-    thresh = attributes_common.get_attributes_threshold(activities, alist, decreasing_factor, min_activity_count=pd_filtering_constants.MIN_NO_OF_ACTIVITIES_TO_RETAIN_FOR_DIAGRAM, max_activity_count=pd_filtering_constants.MAX_NO_OF_ACTIVITIES_TO_RETAIN_FOR_DIAGRAM)
+    thresh = attributes_common.get_attributes_threshold(alist, decreasing_factor,
+                                                        min_activity_count=MIN_NO_OF_ACTIVITIES_TO_RETAIN_FOR_DIAGRAM,
+                                                        max_activity_count=MAX_NO_OF_ACTIVITIES_TO_RETAIN_FOR_DIAGRAM)
 
     return filter_df_keeping_activ_exc_thresh(df, thresh, activity_key=activity_key, act_count=activities)
+
 
 def get_attribute_values(df, attribute_key, parameters=None):
     """
@@ -112,10 +130,12 @@ def get_attribute_values(df, attribute_key, parameters=None):
         parameters = {}
     str(parameters)
     attributes_values_dict = dict(df[attribute_key].value_counts())
-    #print("attributes_values_dict=",attributes_values_dict)
+    # print("attributes_values_dict=",attributes_values_dict)
     return attributes_values_dict
 
-def filter_df_on_attribute_values(df, values, case_id_glue="case:concept:name", attribute_key="concept:name", positive=True):
+
+def filter_df_on_attribute_values(df, values, case_id_glue="case:concept:name", attribute_key="concept:name",
+                                  positive=True):
     """
     Filter dataframe on attribute values
 
@@ -130,7 +150,8 @@ def filter_df_on_attribute_values(df, values, case_id_glue="case:concept:name", 
     attribute_key
         Attribute we want to filter
     positive
-        Specifies if the filtered should be applied including traces (positive=True) or excluding traces (positive=False)
+        Specifies if the filtered should be applied including traces (positive=True) or excluding traces
+        (positive=False)
 
     Returns
     ----------
@@ -145,6 +166,7 @@ def filter_df_on_attribute_values(df, values, case_id_glue="case:concept:name", 
     if positive:
         return df[i1.isin(i2)]
     return df[~i1.isin(i2)]
+
 
 def filter_df_keeping_activ_exc_thresh(df, thresh, act_count=None, activity_key="concept:name"):
     """
@@ -172,7 +194,8 @@ def filter_df_keeping_activ_exc_thresh(df, thresh, act_count=None, activity_key=
     df = df[df[activity_key].isin(act_count)]
     return df
 
-def filter_df_keeping_specno_activities(df, activity_key="concept:name", max_no_activities=25):
+
+def filter_df_keeping_spno_activities(df, activity_key="concept:name", max_no_activities=25):
     """
     Filter a dataframe on the specified number of attributes
 
@@ -196,7 +219,8 @@ def filter_df_keeping_specno_activities(df, activity_key="concept:name", max_no_
         activity_values_ordered_list.append([act, activity_values_dict[act]])
     activity_values_ordered_list = sorted(activity_values_ordered_list)
     # keep only a number of attributes <= max_no_activities
-    activity_values_ordered_list = activity_values_ordered_list[0:min(len(activity_values_ordered_list), max_no_activities)]
+    activity_values_ordered_list = activity_values_ordered_list[
+                                   0:min(len(activity_values_ordered_list), max_no_activities)]
     activity_to_keep = [x[0] for x in activity_values_ordered_list]
     df = df[df[activity_key].isin(activity_to_keep)]
     return df
