@@ -233,8 +233,8 @@ def apply(bpmn_graph, parameters=None):
             target_arc = utils.add_arc_from_to(trans, corresponding_in_nodes[target_ref].pop(0), net)
             elements_correspondence[target_arc] = flow
             if not str(flow) in inv_elements_correspondence:
-                inv_elements_correspondence[str(flow)] = []
-            inv_elements_correspondence[str(flow)].append(trans)
+                inv_elements_correspondence[str(flow[2])] = []
+            inv_elements_correspondence[str(flow[2])].append(target_arc)
 
     net = remove_unconnected_places(net)
     initial_marking = get_initial_marking(net)

@@ -17,6 +17,10 @@ VERSIONS_PETRI = {WO_DECORATION: wo_decoration.apply_petri, FREQUENCY_DECORATION
                   PERFORMANCE_DECORATION: performance.apply_petri,
                   FREQUENCY_GREEDY: frequency.apply_petri_greedy, PERFORMANCE_GREEDY: performance.apply_petri_greedy}
 
+VERSIONS_CONVERT = {WO_DECORATION: wo_decoration.apply_through_conv, FREQUENCY_DECORATION: frequency.apply_through_conv,
+                    PERFORMANCE_DECORATION: wo_decoration.apply, FREQUENCY_GREEDY: wo_decoration.apply,
+                    PERFORMANCE_GREEDY: wo_decoration.apply}
+
 
 def apply(bpmn_graph, bpmn_aggreg_statistics=None, parameters=None, variant="wo_decoration"):
     """
@@ -79,6 +83,33 @@ def apply_petri(net, initial_marking, final_marking, log=None, aggregated_statis
     """
     return VERSIONS_PETRI[variant](net, initial_marking, final_marking, log=log,
                                    aggregated_statistics=aggregated_statistics, parameters=parameters)
+
+
+def apply_through_conv(bpmn_graph, log=None, aggregated_statistics=None, parameters=None, variant="wo_decoration"):
+    """
+    Factory method to visualize a BPMN graph decorating it through conversion to a Petri net
+
+    Parameters
+    -----------
+    bpmn_graph
+        BPMN graph object
+    log
+        (Optional) log where the replay technique should be applied
+    aggregated_statistics
+        (Optional) element-wise statistics calculated on the Petri net
+    parameters
+        Possible parameters, of the algorithm, including:
+            format -> Format of the image to render (pdf, png, svg)
+    variant
+        Variant of the algorithm to use, possible values:
+            wo_decoration, frequency, performance, frequency_greedy, performance_greedy
+
+    Returns
+    -----------
+    file_name
+        Path of the figure in which the rendered BPMN has been saved
+    """
+    return VERSIONS_CONVERT[variant](bpmn_graph, log=log, aggregated_statistics=aggregated_statistics, parameters=parameters)
 
 
 def dummy():
