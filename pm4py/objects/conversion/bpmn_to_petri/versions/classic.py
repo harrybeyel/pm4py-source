@@ -1,3 +1,5 @@
+import uuid
+
 from pm4py.objects.petri import utils
 from pm4py.objects.petri.petrinet import PetriNet, Marking
 
@@ -133,10 +135,26 @@ def apply(bpmn_graph, parameters=None):
             net.transitions.add(trans)
         elif "gateway" in node_type:
             if "parallelgateway" in node_type:
-                if len(node[1]['incoming']) > len(node[1]['outgoing']):
-                    print("PARALLEL SPLIT GATEWAY")
-                else:
-                    print("PARALLEL JOIN GATEWAY")
+                place = PetriNet.Place('pp_' + node_id)
+                net.places.add(place)
+                corresponding_in_nodes[node_id] = []
+                corresponding_out_nodes[node_id] = []
+                for edge in node[1]['incoming']:
+                    htrans = PetriNet.Transition(str(uuid.uuid4()), None)
+                    net.transitions.add(htrans)
+                    hplace = PetriNet.Place(str(uuid.uuid4()))
+                    net.places.add(hplace)
+                    utils.add_arc_from_to(hplace, htrans, net)
+                    utils.add_arc_from_to(htrans, place, net)
+                    corresponding_in_nodes[node_id].append(hplace)
+                for edge in node[1]['outgoing']:
+                    htrans = PetriNet.Transition(str(uuid.uuid4()), None)
+                    net.transitions.add(htrans)
+                    hplace = PetriNet.Place(str(uuid.uuid4()))
+                    net.places.add(hplace)
+                    utils.add_arc_from_to(htrans, hplace, net)
+                    utils.add_arc_from_to(place, htrans, net)
+                    corresponding_out_nodes[node_id].append(hplace)
             else:
                 input_place = PetriNet.Place('i_' + node_id)
                 net.places.add(input_place)

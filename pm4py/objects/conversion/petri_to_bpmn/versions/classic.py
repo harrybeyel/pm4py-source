@@ -1,7 +1,7 @@
 import uuid
 
 import bpmn_python.bpmn_diagram_rep as diagram
-
+from pm4py.objects.bpmn.importer import bpmn_diagram_rep as diagram
 from pm4py.objects.conversion.petri_to_bpmn.util import constants
 from pm4py.objects.petri.petrinet import PetriNet
 
