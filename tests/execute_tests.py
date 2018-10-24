@@ -29,6 +29,7 @@ if __name__ == "__main__":
     from tests.evaluation_tests import ProcessModelEvaluationTests
     from tests.visual_test import VisualizationTest1
     from tests.case_man_test import CaseManagementTest
+    from tests.bpmn_tests import BpmnTests
 
     test1_object = Pm4pyImportPackageTest()
     test2_object = XesImportExportTest()
@@ -52,5 +53,6 @@ if __name__ == "__main__":
     test20_object = ProcessModelEvaluationTests()
     test21_object = VisualizationTest1()
     test22_object = CaseManagementTest()
+    test23_object = BpmnTests()
 
     unittest.main()
