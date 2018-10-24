@@ -1,7 +1,7 @@
 import os
 
-import bpmn_python.bpmn_diagram_export as bpmn_exporter_internal
-
+#import bpmn_python.bpmn_diagram_export as bpmn_exporter_internal
+from pm4py.objects.bpmn.exporter.bpmn_diagram_export import BpmnDiagramGraphExport
 
 def export_bpmn(bpmn_graph, file_path):
     """
@@ -20,4 +20,4 @@ def export_bpmn(bpmn_graph, file_path):
     file_path = os.path.basename(file_path)
     directory = directory.replace("\\", "\\\\")
     directory = directory + os.sep
-    bpmn_exporter_internal.BpmnDiagramGraphExport.export_xml_file(directory, file_path, bpmn_graph)
+    BpmnDiagramGraphExport.export_xml_file(directory, file_path, bpmn_graph)

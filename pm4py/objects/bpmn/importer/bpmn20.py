@@ -1,5 +1,5 @@
-import bpmn_python.bpmn_diagram_import as bpmn_importer_internal
-import bpmn_python.bpmn_diagram_rep as diagram
+from pm4py.objects.bpmn.importer.bpmn_diagram_import import BpmnDiagramGraphImport
+from pm4py.objects.bpmn.importer import bpmn_diagram_rep as diagram
 
 
 def import_bpmn(file_path):
@@ -17,5 +17,5 @@ def import_bpmn(file_path):
         BPMN graph object
     """
     bpmn_graph = diagram.BpmnDiagramGraph()
-    bpmn_importer_internal.BpmnDiagramGraphImport.load_diagram_from_xml(file_path, bpmn_graph)
+    BpmnDiagramGraphImport.load_diagram_from_xml(file_path, bpmn_graph)
     return bpmn_graph
