@@ -18,8 +18,9 @@ VERSIONS_PETRI = {WO_DECORATION: wo_decoration.apply_petri, FREQUENCY_DECORATION
                   FREQUENCY_GREEDY: frequency.apply_petri_greedy, PERFORMANCE_GREEDY: performance.apply_petri_greedy}
 
 VERSIONS_CONVERT = {WO_DECORATION: wo_decoration.apply_through_conv, FREQUENCY_DECORATION: frequency.apply_through_conv,
-                    PERFORMANCE_DECORATION: wo_decoration.apply, FREQUENCY_GREEDY: wo_decoration.apply,
-                    PERFORMANCE_GREEDY: wo_decoration.apply}
+                    PERFORMANCE_DECORATION: performance.apply_through_conv,
+                    FREQUENCY_GREEDY: frequency.apply_through_conv_greedy,
+                    PERFORMANCE_GREEDY: performance.apply_through_conv_greedy}
 
 
 def apply(bpmn_graph, bpmn_aggreg_statistics=None, parameters=None, variant="wo_decoration"):

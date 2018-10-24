@@ -7,6 +7,7 @@ from pm4py.visualization.bpmn.util import convert_performance_map
 from pm4py.visualization.bpmn.util.bpmn_to_figure import bpmn_diagram_to_figure
 from pm4py.visualization.petrinet.util import vis_trans_shortest_paths
 from pm4py.visualization.petrinet.versions import token_decoration
+from pm4py.objects.conversion.bpmn_to_petri import factory as bpmn_to_petri
 
 
 def apply(bpmn_graph, parameters=None, bpmn_aggreg_statistics=None):
@@ -89,6 +90,53 @@ def apply_petri(net, initial_marking, final_marking, log=None, aggregated_statis
     return file_name
 
 
+def apply_through_conv(bpmn_graph, log=None, aggregated_statistics=None, parameters=None):
+    """
+    Visualize a BPMN graph decorating it through conversion to a Petri net
+
+    Parameters
+    -----------
+    bpmn_graph
+        BPMN graph object
+    log
+        (Optional) log where the replay technique should be applied
+    aggregated_statistics
+        (Optional) element-wise statistics calculated on the Petri net
+    parameters
+        Possible parameters, of the algorithm, including:
+            format -> Format of the image to render (pdf, png, svg)
+    variant
+        Variant of the algorithm to use, possible values:
+            wo_decoration, frequency, performance, frequency_greedy, performance_greedy
+
+    Returns
+    -----------
+    file_name
+        Path of the figure in which the rendered BPMN has been saved
+    """
+
+    if parameters is None:
+        parameters = {}
+
+    image_format = parameters["format"] if "format" in parameters else "png"
+
+    net, initial_marking, final_marking, elements_correspondence, inv_elements_correspondence, el_corr_keys_map =\
+        bpmn_to_petri.apply(bpmn_graph)
+
+    if aggregated_statistics is None and log is not None:
+
+        aggregated_statistics = token_decoration.get_decorations(log, net, initial_marking, final_marking,
+                                                                 parameters=parameters, measure="performance")
+
+    bpmn_aggreg_statistics = None
+    if aggregated_statistics is not None:
+        bpmn_aggreg_statistics = convert_performance_map.convert_performance_map_to_bpmn(aggregated_statistics,
+                                                                                         inv_elements_correspondence)
+
+    file_name = bpmn_diagram_to_figure(bpmn_graph, image_format, bpmn_aggreg_statistics=bpmn_aggreg_statistics)
+    return file_name
+
+
 def apply_petri_greedy(net, initial_marking, final_marking, log=None, aggr_stat=None, parameters=None):
     """
     Visualize a BPMN graph from a Petri net, decorated with performance, using the given parameters (greedy algorithm)
@@ -147,3 +195,31 @@ def apply_petri_greedy(net, initial_marking, final_marking, log=None, aggr_stat=
 
     file_name = bpmn_diagram_to_figure(bpmn_graph, image_format, bpmn_aggreg_statistics=bpmn_aggreg_statistics)
     return file_name
+
+
+def apply_through_conv_greedy(bpmn_graph, log=None, aggregated_statistics=None, parameters=None):
+    """
+    Visualize a BPMN graph decorating it through conversion to a Petri net
+
+    Parameters
+    -----------
+    bpmn_graph
+        BPMN graph object
+    log
+        (Optional) log where the replay technique should be applied
+    aggregated_statistics
+        (Optional) element-wise statistics calculated on the Petri net
+    parameters
+        Possible parameters, of the algorithm, including:
+            format -> Format of the image to render (pdf, png, svg)
+    variant
+        Variant of the algorithm to use, possible values:
+            wo_decoration, frequency, performance, frequency_greedy, performance_greedy
+
+    Returns
+    -----------
+    file_name
+        Path of the figure in which the rendered BPMN has been saved
+    """
+
+    raise Exception("apply_through_conv_greedy not implemented")

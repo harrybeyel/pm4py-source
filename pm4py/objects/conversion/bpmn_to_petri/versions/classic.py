@@ -229,12 +229,13 @@ def apply(bpmn_graph, parameters=None):
         if source_ref in corresponding_out_nodes and target_ref in corresponding_in_nodes:
             trans = PetriNet.Transition(flow_id, None)
             net.transitions.add(trans)
-            utils.add_arc_from_to(corresponding_out_nodes[source_ref].pop(0), trans, net)
+            source_arc = utils.add_arc_from_to(corresponding_out_nodes[source_ref].pop(0), trans, net)
             target_arc = utils.add_arc_from_to(trans, corresponding_in_nodes[target_ref].pop(0), net)
             elements_correspondence[target_arc] = flow
             if not str(flow) in inv_elements_correspondence:
                 inv_elements_correspondence[str(flow[2])] = []
             inv_elements_correspondence[str(flow[2])].append(target_arc)
+            inv_elements_correspondence[str(flow[2])].append(source_arc)
 
     net = remove_unconnected_places(net)
     initial_marking = get_initial_marking(net)

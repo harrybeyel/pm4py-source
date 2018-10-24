@@ -8,7 +8,8 @@ from pm4py.visualization.bpmn.util import convert_performance_map
 from pm4py.visualization.bpmn.util.bpmn_to_figure import bpmn_diagram_to_figure
 from pm4py.visualization.petrinet.util import vis_trans_shortest_paths
 from pm4py.visualization.petrinet.versions import token_decoration
-
+from pm4py.objects.log.util.xes import DEFAULT_NAME_KEY
+from pm4py.util.constants import PARAMETER_CONSTANT_ACTIVITY_KEY
 
 def apply(bpmn_graph, parameters=None, bpmn_aggreg_statistics=None):
     """
@@ -177,12 +178,13 @@ def apply_petri_greedy(net, initial_marking, final_marking, log=None, aggregated
                                                                                                               final_marking)
 
     activity_key = parameters[
-        pm4py.util.constants.PARAMETER_CONSTANT_ACTIVITY_KEY] if pm4py.util.constants.PARAMETER_CONSTANT_ACTIVITY_KEY in parameters else log_lib.util.xes.DEFAULT_NAME_KEY
+        PARAMETER_CONSTANT_ACTIVITY_KEY] if PARAMETER_CONSTANT_ACTIVITY_KEY in parameters else DEFAULT_NAME_KEY
 
     if aggregated_statistics is None and log is not None:
         dfg = dfg_factory.apply(log, variant="frequency")
         activities_count = attributes_filter.get_attribute_values(log, activity_key)
         spaths = vis_trans_shortest_paths.get_shortest_paths(net)
+
         aggregated_statistics = vis_trans_shortest_paths.get_decorations_from_dfg_spaths_acticount(net, dfg, spaths,
                                                                                                    activities_count,
                                                                                                    variant="frequency")
@@ -194,3 +196,30 @@ def apply_petri_greedy(net, initial_marking, final_marking, log=None, aggregated
 
     file_name = bpmn_diagram_to_figure(bpmn_graph, image_format, bpmn_aggreg_statistics=bpmn_aggreg_statistics)
     return file_name
+
+def apply_through_conv_greedy(bpmn_graph, log=None, aggregated_statistics=None, parameters=None):
+    """
+    Visualize a BPMN graph decorating it through conversion to a Petri net
+
+    Parameters
+    -----------
+    bpmn_graph
+        BPMN graph object
+    log
+        (Optional) log where the replay technique should be applied
+    aggregated_statistics
+        (Optional) element-wise statistics calculated on the Petri net
+    parameters
+        Possible parameters, of the algorithm, including:
+            format -> Format of the image to render (pdf, png, svg)
+    variant
+        Variant of the algorithm to use, possible values:
+            wo_decoration, frequency, performance, frequency_greedy, performance_greedy
+
+    Returns
+    -----------
+    file_name
+        Path of the figure in which the rendered BPMN has been saved
+    """
+
+    raise Exception("apply_through_conv_greedy not implemented")
