@@ -113,6 +113,14 @@ def apply(bpmn_graph, parameters=None):
         Initial marking of the Petri net
     final_marking
         Final marking of the Petri net
+    elements_correspondence
+        Correspondence between meaningful elements of the Petri net (objects) and meaningful elements of the
+        BPMN graph (dicts)
+    inv_elements_correspondence
+        Correspondence between meaningful elements of the BPMN graph (dicts) and meaningful elements of the
+        Petri net (objects)
+    el_corr_keys_map
+        Correspondence between string-ed keys of elements_correspondence with the corresponding elements
     """
     if parameters is None:
         parameters = {}
@@ -120,7 +128,9 @@ def apply(bpmn_graph, parameters=None):
     nodes = bpmn_graph.get_nodes()
     corresponding_in_nodes = {}
     corresponding_out_nodes = {}
-    corresponding_arcs = {}
+    elements_correspondence = {}
+    inv_elements_correspondence = {}
+    el_corr_keys_map = {}
     start_event_subprocess = {}
     end_event_subprocess = {}
     # adds nodes
@@ -133,6 +143,10 @@ def apply(bpmn_graph, parameters=None):
         if "task" in node_type:
             trans = PetriNet.Transition(node_id, node_name)
             net.transitions.add(trans)
+            elements_correspondence[trans] = node[1]
+            if not str(node[1]) in inv_elements_correspondence:
+                inv_elements_correspondence[str(node[1])] = []
+            inv_elements_correspondence[str(node[1])].append(trans)
         elif "gateway" in node_type:
             if "parallelgateway" in node_type:
                 place = PetriNet.Place('pp_' + node_id)
@@ -217,10 +231,16 @@ def apply(bpmn_graph, parameters=None):
             net.transitions.add(trans)
             utils.add_arc_from_to(corresponding_out_nodes[source_ref].pop(0), trans, net)
             target_arc = utils.add_arc_from_to(trans, corresponding_in_nodes[target_ref].pop(0), net)
-            corresponding_arcs[target_arc] = flow
+            elements_correspondence[target_arc] = flow
+            if not str(flow) in inv_elements_correspondence:
+                inv_elements_correspondence[str(flow)] = []
+            inv_elements_correspondence[str(flow)].append(trans)
 
     net = remove_unconnected_places(net)
     initial_marking = get_initial_marking(net)
     net, final_marking = get_final_marking(net)
 
-    return net, initial_marking, final_marking
+    for el in elements_correspondence:
+        el_corr_keys_map[str(el)] = el
+
+    return net, initial_marking, final_marking, elements_correspondence, inv_elements_correspondence, el_corr_keys_map
