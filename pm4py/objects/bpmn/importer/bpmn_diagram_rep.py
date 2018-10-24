@@ -113,7 +113,7 @@ class BpmnDiagramGraph(object):
         else:
             nodes = []
             for node in tmp_nodes:
-                if node[1][consts.Consts.type] == node_type:
+                if len(node) > 1 and consts.Consts.type in node[1] and node[1][consts.Consts.type] == node_type:
                     nodes.append(node)
             return nodes
 
