@@ -16,7 +16,7 @@ def view(bpmn_figure):
     try:
         filename = bpmn_figure.name
         bpmn_figure = filename
-    except:
+    except AttributeError:
         # continue without problems, a proper path has been provided
         pass
 
@@ -25,7 +25,7 @@ def view(bpmn_figure):
     try:
         get_ipython()
         is_ipynb = True
-    except:
+    except NameError:
         pass
 
     if is_ipynb:
@@ -54,7 +54,7 @@ def save(bpmn_figure, output_file_path):
     try:
         filename = bpmn_figure.name
         bpmn_figure = filename
-    except:
+    except AttributeError:
         # continue without problems, a proper path has been provided
         pass
 

@@ -69,6 +69,7 @@ class BpmnDiagramGraphExport(object):
         :param data_object_params: dictionary with given subprocess parameters,
         :param output_element: object representing BPMN XML 'subprocess' element.
         """
+        type(bpmn_diagram)
         output_element.set(consts.Consts.is_collection, data_object_params[consts.Consts.is_collection])
 
     # TODO Complex gateway not fully supported

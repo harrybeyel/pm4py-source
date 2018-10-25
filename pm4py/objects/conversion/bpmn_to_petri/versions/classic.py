@@ -124,6 +124,7 @@ def apply(bpmn_graph, parameters=None):
     """
     if parameters is None:
         parameters = {}
+    del parameters
     net = PetriNet("converted_net")
     nodes = bpmn_graph.get_nodes()
     corresponding_in_nodes = {}
@@ -154,6 +155,7 @@ def apply(bpmn_graph, parameters=None):
                 corresponding_in_nodes[node_id] = []
                 corresponding_out_nodes[node_id] = []
                 for edge in node[1]['incoming']:
+                    str(edge)
                     htrans = PetriNet.Transition(str(uuid.uuid4()), None)
                     net.transitions.add(htrans)
                     hplace = PetriNet.Place(str(uuid.uuid4()))
@@ -162,6 +164,7 @@ def apply(bpmn_graph, parameters=None):
                     utils.add_arc_from_to(htrans, place, net)
                     corresponding_in_nodes[node_id].append(hplace)
                 for edge in node[1]['outgoing']:
+                    str(edge)
                     htrans = PetriNet.Transition(str(uuid.uuid4()), None)
                     net.transitions.add(htrans)
                     hplace = PetriNet.Place(str(uuid.uuid4()))

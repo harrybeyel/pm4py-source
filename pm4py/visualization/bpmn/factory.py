@@ -1,6 +1,6 @@
 from pm4py.visualization.bpmn.util.bpmn_to_figure import bpmn_diagram_to_figure
-from pm4py.visualization.bpmn.util.save_view import view
 from pm4py.visualization.bpmn.util.save_view import save
+from pm4py.visualization.bpmn.util.save_view import view
 from pm4py.visualization.bpmn.versions import wo_decoration, frequency, performance
 
 WO_DECORATION = "wo_decoration"
@@ -110,7 +110,8 @@ def apply_through_conv(bpmn_graph, log=None, aggregated_statistics=None, paramet
     file_name
         Path of the figure in which the rendered BPMN has been saved
     """
-    return VERSIONS_CONVERT[variant](bpmn_graph, log=log, aggregated_statistics=aggregated_statistics, parameters=parameters)
+    return VERSIONS_CONVERT[variant](bpmn_graph, log=log, aggregated_statistics=aggregated_statistics,
+                                     parameters=parameters)
 
 
 def dummy():

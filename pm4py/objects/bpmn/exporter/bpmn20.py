@@ -1,7 +1,7 @@
 import os
 
-#import bpmn_python.bpmn_diagram_export as bpmn_exporter_internal
 from pm4py.objects.bpmn.exporter.bpmn_diagram_export import BpmnDiagramGraphExport
+
 
 def export_bpmn(bpmn_graph, file_path):
     """

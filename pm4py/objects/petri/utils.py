@@ -46,7 +46,8 @@ def add_arc_from_to(fr, to, net, weight=1):
 
     Returns
     -------
-    None
+    arc
+        Arc object that was added to the Petri net
     """
     a = petri.petrinet.PetriNet.Arc(fr, to, weight)
     net.arcs.add(a)

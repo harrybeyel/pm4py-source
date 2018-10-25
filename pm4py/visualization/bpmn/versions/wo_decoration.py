@@ -1,6 +1,5 @@
 from pm4py.objects.conversion.petri_to_bpmn import factory as bpmn_converter
 from pm4py.visualization.bpmn.util.bpmn_to_figure import bpmn_diagram_to_figure
-from pm4py.objects.conversion.bpmn_to_petri import factory as bpmn_to_petri
 
 
 def apply(bpmn_graph, parameters=None, bpmn_aggreg_statistics=None):
@@ -73,6 +72,7 @@ def apply_petri(net, initial_marking, final_marking, log=None, aggregated_statis
     file_name = bpmn_diagram_to_figure(bpmn_graph, image_format, bpmn_aggreg_statistics=None)
     return file_name
 
+
 def apply_through_conv(bpmn_graph, log=None, aggregated_statistics=None, parameters=None):
     """
     Visualize a BPMN graph decorating it through conversion to a Petri net
@@ -88,14 +88,12 @@ def apply_through_conv(bpmn_graph, log=None, aggregated_statistics=None, paramet
     parameters
         Possible parameters, of the algorithm, including:
             format -> Format of the image to render (pdf, png, svg)
-    variant
-        Variant of the algorithm to use, possible values:
-            wo_decoration, frequency, performance, frequency_greedy, performance_greedy
 
     Returns
     -----------
     file_name
         Path of the figure in which the rendered BPMN has been saved
     """
-
+    del log
+    del aggregated_statistics
     return apply(bpmn_graph, parameters=parameters)

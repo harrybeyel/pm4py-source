@@ -1,6 +1,7 @@
 import uuid
 
 import bpmn_python.bpmn_diagram_rep as diagram
+
 from pm4py.objects.bpmn.importer import bpmn_diagram_rep as diagram
 from pm4py.objects.conversion.petri_to_bpmn.util import constants
 from pm4py.objects.petri.petrinet import PetriNet
@@ -32,7 +33,7 @@ def get_start_trans_petri_given_imarking(initial_marking):
             trans = arc.target
             start_involved_trans.add(trans)
             if trans.label is not None:
-                if not trans in start_trans:
+                if trans not in start_trans:
                     start_trans.append(trans)
 
     if len(start_trans) == 0:
@@ -48,7 +49,7 @@ def get_start_trans_petri_given_imarking(initial_marking):
                         trans2 = arc3.target
                         start_involved_trans.add(trans2)
                         if trans2.label is not None:
-                            if not trans2 in start_trans:
+                            if trans2 not in start_trans:
                                 start_trans.append(trans2)
 
     return start_trans, start_involved_places, start_involved_arcs, start_involved_trans
@@ -80,7 +81,7 @@ def get_final_trans_petri_given_fmarking(final_marking):
             trans = arc.source
             final_involved_trans.add(trans)
             if trans.label is not None:
-                if not trans in final_trans:
+                if trans not in final_trans:
                     final_trans.append(trans)
 
     if len(final_trans) == 0 or True:
@@ -96,7 +97,7 @@ def get_final_trans_petri_given_fmarking(final_marking):
                         trans2 = arc3.source
                         final_involved_trans.add(trans2)
                         if trans2.label is not None:
-                            if not trans in final_trans:
+                            if trans not in final_trans:
                                 final_trans.append(trans2)
 
     return final_trans, final_involved_places, final_involved_arcs, final_involved_trans
@@ -165,9 +166,11 @@ def apply(net, initial_marking, final_marking, parameters=None):
     bpmn_graph
         BPMN graph
     elements_correspondence
-        Correspondence between meaningful elements of the Petri net (objects) and meaningful elements of the BPMN graph (dicts)
+        Correspondence between meaningful elements of the Petri net (objects) and meaningful
+        elements of the BPMN graph (dicts)
     inv_elements_correspondence
-        Correspondence between meaningful elements of the BPMN graph (dicts) and meaningful elements of the Petri net (objects)
+        Correspondence between meaningful elements of the BPMN graph (dicts) and meaningful
+        elements of the Petri net (objects)
     el_corr_keys_map
         Correspondence between string-ed keys of elements_correspondence with the corresponding elements
     """
@@ -182,9 +185,9 @@ def apply(net, initial_marking, final_marking, parameters=None):
     [start_id, _] = bpmn_graph.add_start_event_to_diagram(process_id, start_event_name="start",
                                                           node_id=constants.START_EVENT_ID)
     [end_id, _] = bpmn_graph.add_end_event_to_diagram(process_id, end_event_name="end", node_id=constants.END_EVENT_ID)
-    start_trans, start_involved_places, start_involved_arcs, start_involved_trans = get_start_trans_petri_given_imarking(
+    start_trans, start_involved_places, start_inv_arcs, start_inv_trans = get_start_trans_petri_given_imarking(
         initial_marking)
-    final_trans, final_involved_places, final_involved_arcs, final_involved_trans = get_final_trans_petri_given_fmarking(
+    final_trans, final_involved_places, final_inv_arcs, final_inv_trans = get_final_trans_petri_given_fmarking(
         final_marking)
 
     for trans in net.transitions:
@@ -224,7 +227,7 @@ def apply(net, initial_marking, final_marking, parameters=None):
                 out_trans = arc.target
 
             if len(in_trans.out_arcs) > 1 and len(out_trans.in_arcs) == 1:
-                if not in_trans in mapped_trans:
+                if in_trans not in mapped_trans:
                     gateway_name_split = in_trans.name
                     gateway_id_split = in_trans.name
                     [gateway_split, _] = bpmn_graph.add_parallel_gateway_to_diagram(process_id,
@@ -232,7 +235,7 @@ def apply(net, initial_marking, final_marking, parameters=None):
                                                                                     node_id=gateway_id_split)
                     mapped_trans[in_trans] = gateway_split
             elif len(out_trans.in_arcs) > 1 and len(in_trans.out_arcs) == 1:
-                if not out_trans in mapped_trans:
+                if out_trans not in mapped_trans:
                     gateway_name_join = out_trans.name
                     gateway_id_join = out_trans.name
                     [gateway_join, _] = bpmn_graph.add_parallel_gateway_to_diagram(process_id,
@@ -246,9 +249,9 @@ def apply(net, initial_marking, final_marking, parameters=None):
                     sequence_flow_id, flow = bpmn_graph.add_sequence_flow_to_diagram(process_id,
                                                                                      bpmn_transitions_map[in_trans],
                                                                                      bpmn_transitions_map[out_trans])
-                    if not in_trans in mapped_trans:
+                    if in_trans not in mapped_trans:
                         mapped_trans[in_trans] = bpmn_transitions_map[in_trans]
-                    if not out_trans in mapped_trans:
+                    if out_trans not in mapped_trans:
                         mapped_trans[out_trans] = bpmn_transitions_map[out_trans]
 
                 if flow is not None:
@@ -263,39 +266,39 @@ def apply(net, initial_marking, final_marking, parameters=None):
     for trans in net.transitions:
         if len(trans.in_arcs) == 1 and len(trans.out_arcs) == 1 and trans.label is None and not \
                 [arc.source for arc in trans.in_arcs][0] in initial_marking and not \
-        [arc.target for arc in trans.out_arcs][
-            0] in final_marking:
+                [arc.target for arc in trans.out_arcs][
+                    0] in final_marking:
             pass
         else:
-            if not trans in mapped_trans:
+            if trans not in mapped_trans:
                 if trans.label is None:
                     gateway_name = trans.name
                     gateway_id_principal = trans.name
                     if (len(trans.in_arcs) == 1 and len(trans.out_arcs) > 1) or (
                             len(trans.out_arcs) == 1 and len(trans.in_arcs) > 1):
-                        [gateway_principal, _] = bpmn_graph.add_parallel_gateway_to_diagram(process_id,
-                                                                                            gateway_name=gateway_name,
-                                                                                            node_id=gateway_id_principal)
+                        [gateway_princ, _] = bpmn_graph.add_parallel_gateway_to_diagram(process_id,
+                                                                                        gateway_name=gateway_name,
+                                                                                        node_id=gateway_id_principal)
                     else:
-                        [gateway_principal, _] = bpmn_graph.add_exclusive_gateway_to_diagram(process_id,
-                                                                                             gateway_name=gateway_name,
-                                                                                             node_id=gateway_id_principal)
-                    mapped_trans[trans] = gateway_principal
+                        [gateway_princ, _] = bpmn_graph.add_exclusive_gateway_to_diagram(process_id,
+                                                                                         gateway_name=gateway_name,
+                                                                                         node_id=gateway_id_principal)
+                    mapped_trans[trans] = gateway_princ
                 else:
                     mapped_trans[trans] = bpmn_transitions_map[trans]
 
     for trans in net.transitions:
         if len(trans.in_arcs) == 1 and len(trans.out_arcs) == 1 and trans.label is None and not \
                 [arc.source for arc in trans.in_arcs][0] in initial_marking and not \
-        [arc.target for arc in trans.out_arcs][0] in final_marking:
+                [arc.target for arc in trans.out_arcs][0] in final_marking:
             pass
         else:
             if trans in mapped_trans:
                 for arc in trans.in_arcs:
-                    if not arc in mapped_arcs:
+                    if arc not in mapped_arcs:
                         place = arc.source
 
-                        if not place in mapped_places and len(place.in_arcs) == 1 and len(place.out_arcs) == 1 and \
+                        if place not in mapped_places and len(place.in_arcs) == 1 and len(place.out_arcs) == 1 and \
                                 list(place.in_arcs)[0].source in mapped_trans:
                             in_arc_0 = list(place.in_arcs)[0]
                             in_trans = in_arc_0.source
@@ -311,13 +314,13 @@ def apply(net, initial_marking, final_marking, parameters=None):
                                 elements_correspondence[in_arc_0] = inplace_flow
                             mapped_places[place] = mapped_trans[in_trans]
                         else:
-                            if not place in mapped_places:
+                            if place not in mapped_places:
                                 gateway_name_inplace = place.name
                                 gateway_id_inplace = place.name
-                                [gateway_inplace, _] = bpmn_graph.add_exclusive_gateway_to_diagram(process_id,
-                                                                                                   gateway_name=gateway_name_inplace,
-                                                                                                   node_id=gateway_id_inplace)
-                                mapped_places[place] = gateway_inplace
+                                [gi, _] = bpmn_graph.add_exclusive_gateway_to_diagram(process_id,
+                                                                                      gateway_name=gateway_name_inplace,
+                                                                                      node_id=gateway_id_inplace)
+                                mapped_places[place] = gi
 
                             if not mapped_places[place] == mapped_trans[trans]:
                                 sequence_flow_id, inplace_flow = bpmn_graph.add_sequence_flow_to_diagram(process_id,
@@ -329,10 +332,10 @@ def apply(net, initial_marking, final_marking, parameters=None):
                                 elements_correspondence[arc] = inplace_flow
 
                 for arc in trans.out_arcs:
-                    if not arc in mapped_arcs:
+                    if arc not in mapped_arcs:
                         place = arc.target
 
-                        if not place in mapped_places and len(place.in_arcs) == 1 and len(place.out_arcs) == 1 and \
+                        if place not in mapped_places and len(place.in_arcs) == 1 and len(place.out_arcs) == 1 and \
                                 list(place.out_arcs)[0].target in mapped_trans:
                             out_arc_0 = list(place.out_arcs)[0]
                             out_trans = out_arc_0.target
@@ -348,13 +351,13 @@ def apply(net, initial_marking, final_marking, parameters=None):
                                 elements_correspondence[arc] = outplace_flow
                                 mapped_places[place] = mapped_trans[out_trans]
                         else:
-                            if not place in mapped_places:
-                                gateway_name_outplace = place.name
+                            if place not in mapped_places:
+                                gateway_name_out = place.name
                                 gateway_id_outplace = place.name
-                                [gateway_outplace, _] = bpmn_graph.add_exclusive_gateway_to_diagram(process_id,
-                                                                                                    gateway_name=gateway_name_outplace,
-                                                                                                    node_id=gateway_id_outplace)
-                                mapped_places[place] = gateway_outplace
+                                [go, _] = bpmn_graph.add_exclusive_gateway_to_diagram(process_id,
+                                                                                      gateway_name=gateway_name_out,
+                                                                                      node_id=gateway_id_outplace)
+                                mapped_places[place] = go
 
                             if not mapped_trans[trans] == mapped_places[place]:
                                 sequence_flow_id, outplace_flow = bpmn_graph.add_sequence_flow_to_diagram(process_id,
@@ -368,8 +371,8 @@ def apply(net, initial_marking, final_marking, parameters=None):
     for trans in net.transitions:
         if len(trans.in_arcs) == 1 and len(trans.out_arcs) == 1 and trans.label is None and not \
                 [arc.source for arc in trans.in_arcs][0] in initial_marking and not \
-        [arc.target for arc in trans.out_arcs][
-            0] in final_marking:
+                [arc.target for arc in trans.out_arcs][
+                    0] in final_marking:
             arc_source = [arc for arc in trans.in_arcs][0]
             arc_target = [arc for arc in trans.out_arcs][0]
             place_source = arc_source.source
@@ -390,9 +393,9 @@ def apply(net, initial_marking, final_marking, parameters=None):
 
         if (petri_el_type == "transition" and el_type == "task") or (petri_el_type == "arc" and el_type == "arc"):
             corresp_el = str(elements_correspondence[el])
-            if not corresp_el in inv_elements_correspondence:
+            if corresp_el not in inv_elements_correspondence:
                 inv_elements_correspondence[corresp_el] = []
-            if not el in inv_elements_correspondence[corresp_el]:
+            if el not in inv_elements_correspondence[corresp_el]:
                 inv_elements_correspondence[corresp_el].append(el)
 
     el_corr_keys_map = {}

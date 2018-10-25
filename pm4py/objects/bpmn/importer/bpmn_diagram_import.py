@@ -6,6 +6,7 @@ from xml.dom import minidom
 
 import bpmn_python.bpmn_import_utils as utils
 import bpmn_python.bpmn_python_consts as consts
+
 from pm4py.objects.bpmn.importer import bpmn_python_consts as consts
 
 
