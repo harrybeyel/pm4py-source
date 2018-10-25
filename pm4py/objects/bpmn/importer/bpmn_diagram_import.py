@@ -377,7 +377,6 @@ class BpmnDiagramGraphImport(object):
                     outgoing_list.append(outgoing_value)
         bpmn_graph.node[element_id][consts.Consts.outgoing_flow] = outgoing_list
 
-
     @staticmethod
     def import_task_to_graph(diagram_graph, process_id, process_attributes, task_element):
         """

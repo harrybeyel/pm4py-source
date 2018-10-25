@@ -72,6 +72,16 @@ class BpmnTests(unittest.TestCase):
         gviz = bpmn_vis_factory.apply_through_conv(bpmn_graph, log=log, variant="performance")
         del gviz
 
+    def test_bpmn_embedding(self):
+        # to avoid static method warnings in tests,
+        # that by construction of the unittest package have to be expressed in such way
+        self.dummy_variable = "dummy_value"
+        log = xes_importer.apply(os.path.join(INPUT_DATA_DIR, "running-example.xes"))
+        obj_path = os.path.join(INPUT_DATA_DIR, "running-example.bpmn")
+        bpmn_graph = bpmn_importer.import_bpmn(obj_path)
+        bpmn_graph = bpmn_vis_factory.apply_embedding(bpmn_graph, log=log, variant="frequency")
+        bpmn_graph = bpmn_vis_factory.apply_embedding(bpmn_graph, log=log, variant="performance")
+        bpmn_exporter.export_bpmn(bpmn_graph, os.path.join(OUTPUT_DATA_DIR, "running-example.bpmn"))
 
 if __name__ == "__main__":
     unittest.main()

@@ -119,7 +119,9 @@ def apply_through_conv(bpmn_graph, log=None, aggregated_statistics=None, paramet
                                      parameters=parameters)
 
 
-def apply_embedding(bpmn_graph, log=None, aggregated_statistics=None, parameters=None, variant="wo_decoration"):
+def apply_embedding(bpmn_graph: object, log: object = None, aggregated_statistics: object = None,
+                    parameters: object = None,
+                    variant: object = "wo_decoration") -> object:
     """
     Embed decoration information inside the BPMN graph
 
@@ -144,6 +146,7 @@ def apply_embedding(bpmn_graph, log=None, aggregated_statistics=None, parameters
     """
     return VERSIONS_EMBEDDING[variant](bpmn_graph, log=log, aggregated_statistics=aggregated_statistics,
                                        parameters=parameters)
+
 
 def dummy():
     """

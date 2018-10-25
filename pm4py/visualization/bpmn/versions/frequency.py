@@ -4,11 +4,12 @@ from pm4py.objects.conversion.bpmn_to_petri import factory as bpmn_to_petri
 from pm4py.objects.conversion.petri_to_bpmn import factory as bpmn_converter
 from pm4py.objects.log.util.xes import DEFAULT_NAME_KEY
 from pm4py.util.constants import PARAMETER_CONSTANT_ACTIVITY_KEY
+from pm4py.visualization.bpmn.util import bpmn_embedding
 from pm4py.visualization.bpmn.util import convert_performance_map
 from pm4py.visualization.bpmn.util.bpmn_to_figure import bpmn_diagram_to_figure
 from pm4py.visualization.petrinet.util import vis_trans_shortest_paths
 from pm4py.visualization.petrinet.versions import token_decoration
-from pm4py.visualization.bpmn.util import bpmn_embedding
+
 
 def apply(bpmn_graph, parameters=None, bpmn_aggreg_statistics=None):
     """

@@ -418,6 +418,11 @@ class BpmnDiagramGraphExport(object):
             waypoint_element = eTree.SubElement(output_flow, "omgdi:waypoint")
             waypoint_element.set(consts.Consts.x, waypoint[0])
             waypoint_element.set(consts.Consts.y, waypoint[1])
+        if consts.Consts.decorations in params:
+            decorations = eTree.SubElement(output_flow, consts.Consts.decorations)
+            for index in range(len(params[consts.Consts.decorations])):
+                dec_xml = eTree.SubElement(decorations, params[consts.Consts.decorations][index][0])
+                dec_xml.text = params[consts.Consts.decorations][index][1]
 
     @staticmethod
     def export_xml_file(directory, filename, bpmn_diagram):

@@ -249,9 +249,9 @@ def apply(net, initial_marking, final_marking, parameters=None):
                 # sequential place between two activities, convert it into direct arc :)
                 flow = None
                 if in_trans.label is not None and out_trans.label is not None:
-                    sequence_flow_id, flow = bpmn_graph.add_sequence_flow_to_diagram(process_id,
-                                                                                     bpmn_transitions_map[in_trans],
-                                                                                     bpmn_transitions_map[out_trans])
+                    seq_flow_id, flow = bpmn_graph.add_sequence_flow_to_diagram(process_id,
+                                                                                bpmn_transitions_map[in_trans],
+                                                                                bpmn_transitions_map[out_trans])
                     if in_trans not in mapped_trans:
                         mapped_trans[in_trans] = bpmn_transitions_map[in_trans]
                     if out_trans not in mapped_trans:
@@ -307,11 +307,11 @@ def apply(net, initial_marking, final_marking, parameters=None):
                             in_trans = in_arc_0.source
 
                             if not mapped_trans[in_trans] == mapped_trans[trans]:
-                                sequence_flow_id, inplace_flow = bpmn_graph.add_sequence_flow_to_diagram(process_id,
-                                                                                                         mapped_trans[
-                                                                                                             in_trans],
-                                                                                                         mapped_trans[
-                                                                                                             trans])
+                                seq_flow_id, inplace_flow = bpmn_graph.add_sequence_flow_to_diagram(process_id,
+                                                                                                    mapped_trans[
+                                                                                                        in_trans],
+                                                                                                    mapped_trans[
+                                                                                                        trans])
                                 mapped_arcs[arc] = inplace_flow
                                 elements_correspondence[arc] = inplace_flow
                                 elements_correspondence[in_arc_0] = inplace_flow
@@ -320,17 +320,17 @@ def apply(net, initial_marking, final_marking, parameters=None):
                             if place not in mapped_places:
                                 gateway_name_inplace = place.name
                                 gateway_id_inplace = place.name
-                                [gi, _] = bpmn_graph.add_exclusive_gateway_to_diagram(process_id,
-                                                                                      gateway_name=gateway_name_inplace,
-                                                                                      node_id=gateway_id_inplace)
-                                mapped_places[place] = gi
+                                [i, _] = bpmn_graph.add_exclusive_gateway_to_diagram(process_id,
+                                                                                     gateway_name=gateway_name_inplace,
+                                                                                     node_id=gateway_id_inplace)
+                                mapped_places[place] = i
 
                             if not mapped_places[place] == mapped_trans[trans]:
-                                sequence_flow_id, inplace_flow = bpmn_graph.add_sequence_flow_to_diagram(process_id,
-                                                                                                         mapped_places[
-                                                                                                             place],
-                                                                                                         mapped_trans[
-                                                                                                             trans])
+                                seq_flow_id, inplace_flow = bpmn_graph.add_sequence_flow_to_diagram(process_id,
+                                                                                                    mapped_places[
+                                                                                                        place],
+                                                                                                    mapped_trans[
+                                                                                                        trans])
                                 mapped_arcs[arc] = inplace_flow
                                 elements_correspondence[arc] = inplace_flow
 
@@ -344,14 +344,14 @@ def apply(net, initial_marking, final_marking, parameters=None):
                             out_trans = out_arc_0.target
 
                             if not mapped_trans[trans] == mapped_trans[out_trans]:
-                                sequence_flow_id, outplace_flow = bpmn_graph.add_sequence_flow_to_diagram(process_id,
-                                                                                                          mapped_trans[
-                                                                                                              trans],
-                                                                                                          mapped_trans[
-                                                                                                              out_trans])
-                                mapped_arcs[out_arc_0] = outplace_flow
-                                elements_correspondence[out_arc_0] = outplace_flow
-                                elements_correspondence[arc] = outplace_flow
+                                seq_flow_id, outp_flow = bpmn_graph.add_sequence_flow_to_diagram(process_id,
+                                                                                                 mapped_trans[
+                                                                                                     trans],
+                                                                                                 mapped_trans[
+                                                                                                     out_trans])
+                                mapped_arcs[out_arc_0] = outp_flow
+                                elements_correspondence[out_arc_0] = outp_flow
+                                elements_correspondence[arc] = outp_flow
                                 mapped_places[place] = mapped_trans[out_trans]
                         else:
                             if place not in mapped_places:
@@ -363,13 +363,13 @@ def apply(net, initial_marking, final_marking, parameters=None):
                                 mapped_places[place] = go
 
                             if not mapped_trans[trans] == mapped_places[place]:
-                                sequence_flow_id, outplace_flow = bpmn_graph.add_sequence_flow_to_diagram(process_id,
-                                                                                                          mapped_trans[
-                                                                                                              trans],
-                                                                                                          mapped_places[
-                                                                                                              place])
-                                mapped_arcs[arc] = outplace_flow
-                                elements_correspondence[arc] = outplace_flow
+                                seq_flow_id, outp_flow = bpmn_graph.add_sequence_flow_to_diagram(process_id,
+                                                                                                 mapped_trans[
+                                                                                                     trans],
+                                                                                                 mapped_places[
+                                                                                                     place])
+                                mapped_arcs[arc] = outp_flow
+                                elements_correspondence[arc] = outp_flow
 
     for trans in net.transitions:
         if len(trans.in_arcs) == 1 and len(trans.out_arcs) == 1 and trans.label is None and not \
@@ -382,9 +382,9 @@ def apply(net, initial_marking, final_marking, parameters=None):
             place_target = arc_target.target
 
             if place_source in mapped_places and place_target in mapped_places:
-                sequence_flow_id, place_flow = bpmn_graph.add_sequence_flow_to_diagram(process_id,
-                                                                                       mapped_places[place_source],
-                                                                                       mapped_places[place_target])
+                seq_flow_id, place_flow = bpmn_graph.add_sequence_flow_to_diagram(process_id,
+                                                                                  mapped_places[place_source],
+                                                                                  mapped_places[place_target])
                 mapped_arcs[arc_source] = place_flow
                 # elements_correspondence[arc_source] = place_flow
                 # elements_correspondence[arc_target] = place_flow
