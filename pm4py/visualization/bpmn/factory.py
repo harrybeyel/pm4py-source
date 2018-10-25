@@ -119,9 +119,9 @@ def dummy():
     Dummy method
     """
     bpmn_graph = None
-    format = None
+    image_format = None
     bpmn_figure = None
     path = None
-    bpmn_diagram_to_figure(bpmn_graph, format)
+    bpmn_diagram_to_figure(bpmn_graph, image_format)
     view(bpmn_figure)
     save(bpmn_figure, path)

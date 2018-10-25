@@ -141,6 +141,7 @@ def apply(bpmn_graph, parameters=None):
             1] else None
         node_type = node[1]['type'].lower()
         node_process = node[1]['process'].lower()
+        trans = None
         if "task" in node_type:
             trans = PetriNet.Transition(node_id, node_name)
             net.transitions.add(trans)

@@ -219,6 +219,9 @@ def apply(net, initial_marking, final_marking, parameters=None):
             in_trans = None
             out_trans = None
 
+            in_arc = None
+            out_arc = None
+
             for arc in place.in_arcs:
                 in_arc = arc
                 in_trans = arc.source
