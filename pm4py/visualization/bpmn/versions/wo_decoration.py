@@ -97,3 +97,29 @@ def apply_through_conv(bpmn_graph, log=None, aggregated_statistics=None, paramet
     del log
     del aggregated_statistics
     return apply(bpmn_graph, parameters=parameters)
+
+
+def apply_embedding(bpmn_graph, log=None, aggregated_statistics=None, parameters=None):
+    """
+    Embed decoration information inside the BPMN graph
+
+    Parameters
+    -----------
+    bpmn_graph
+        BPMN graph object
+    log
+        (Optional) log where the replay technique should be applied
+    aggregated_statistics
+        (Optional) element-wise statistics calculated on the Petri net
+    parameters
+        Possible parameters, of the algorithm
+
+    Returns
+    -----------
+    bpmn_graph
+        Annotated BPMN graph
+    """
+    del log
+    del aggregated_statistics
+    del parameters
+    return bpmn_graph

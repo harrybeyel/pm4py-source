@@ -328,6 +328,11 @@ class BpmnDiagramGraphExport(object):
         for outgoing in params[consts.Consts.outgoing_flow]:
             outgoing_element = eTree.SubElement(output_element, consts.Consts.outgoing_flow)
             outgoing_element.text = outgoing
+        if consts.Consts.decorations in params:
+            decorations = eTree.SubElement(output_element, consts.Consts.decorations)
+            for index in range(len(params[consts.Consts.decorations])):
+                dec_xml = eTree.SubElement(decorations, params[consts.Consts.decorations][index][0])
+                dec_xml.text = params[consts.Consts.decorations][index][1]
 
         if node_type == consts.Consts.task \
                 or node_type == consts.Consts.user_task \

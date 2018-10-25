@@ -22,6 +22,11 @@ VERSIONS_CONVERT = {WO_DECORATION: wo_decoration.apply_through_conv, FREQUENCY_D
                     FREQUENCY_GREEDY: frequency.apply_through_conv_greedy,
                     PERFORMANCE_GREEDY: performance.apply_through_conv_greedy}
 
+VERSIONS_EMBEDDING = {WO_DECORATION: wo_decoration.apply_embedding, FREQUENCY_DECORATION: frequency.apply_embedding,
+                      PERFORMANCE_DECORATION: performance.apply_embedding,
+                      FREQUENCY_GREEDY: frequency.apply_embedding_greedy,
+                      PERFORMANCE_GREEDY: performance.apply_embedding_greedy}
+
 
 def apply(bpmn_graph, bpmn_aggreg_statistics=None, parameters=None, variant="wo_decoration"):
     """
@@ -113,6 +118,32 @@ def apply_through_conv(bpmn_graph, log=None, aggregated_statistics=None, paramet
     return VERSIONS_CONVERT[variant](bpmn_graph, log=log, aggregated_statistics=aggregated_statistics,
                                      parameters=parameters)
 
+
+def apply_embedding(bpmn_graph, log=None, aggregated_statistics=None, parameters=None, variant="wo_decoration"):
+    """
+    Embed decoration information inside the BPMN graph
+
+    Parameters
+    -----------
+    bpmn_graph
+        BPMN graph object
+    log
+        (Optional) log where the replay technique should be applied
+    aggregated_statistics
+        (Optional) element-wise statistics calculated on the Petri net
+    parameters
+        Possible parameters, of the algorithm
+    variant
+        Variant of the algorithm to use, possible values:
+            wo_decoration, frequency, performance, frequency_greedy, performance_greedy
+
+    Returns
+    -----------
+    bpmn_graph
+        Annotated BPMN graph
+    """
+    return VERSIONS_EMBEDDING[variant](bpmn_graph, log=log, aggregated_statistics=aggregated_statistics,
+                                       parameters=parameters)
 
 def dummy():
     """
