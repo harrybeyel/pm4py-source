@@ -1,12 +1,13 @@
 import ciso8601
+import os
 
 from pm4py.objects import log as log_lib
-from pm4py.objects.log.util import compression
+from pm4py.objects.log.util import sorting
 
 
 def import_log(filename, parameters=None):
     """
-    Import a TraceLog object from a XML file
+    Import a log object from a XML file
     containing the traces, the events and the simple attributes of them
 
     Parameters
@@ -35,6 +36,8 @@ def import_log(filename, parameters=None):
     reverse_sort = False
     insert_trace_indexes = False
     max_no_traces_to_import = 1000000000
+    skip_bytes = 0
+    max_bytes_to_read = 100000000000
 
     if "timestamp_sort" in parameters:
         timestamp_sort = parameters["timestamp_sort"]
@@ -46,18 +49,26 @@ def import_log(filename, parameters=None):
         insert_trace_indexes = parameters["insert_trace_indexes"]
     if "max_no_traces_to_import" in parameters:
         max_no_traces_to_import = parameters["max_no_traces_to_import"]
+    if "max_bytes_to_read" in parameters:
+        max_bytes_to_read = parameters["max_bytes_to_read"]
 
-    if filename.endswith("gz"):
-        filename = compression.decompress(filename)
+    file_size = os.stat(filename).st_size
 
-    log = log_lib.log.TraceLog()
+    if file_size > max_bytes_to_read:
+        skip_bytes = file_size - max_bytes_to_read
+
+    log = log_lib.log.EventLog()
     tracecount = 0
     trace = None
     event = None
-    with open(filename, "r") as f:
-        for line in f:
-            content = line.split("\"")
-            tag = content[0].split("<")[1]
+
+    f = open(filename, "r")
+    f.seek(skip_bytes)
+
+    for line in f:
+        content = line.split("\"")
+        if len(content) > 0:
+            tag = content[0].split("<")[-1]
             if trace is not None:
                 if event is not None:
                     if len(content) == 5:
@@ -95,9 +106,10 @@ def import_log(filename, parameters=None):
                     trace = None
             elif tag.startswith("trace"):
                 trace = log_lib.log.Trace()
+    f.close()
 
     if timestamp_sort:
-        log.sort(timestamp_key=timestamp_key, reverse_sort=reverse_sort)
+        log = sorting.sort_timestamp(log, timestamp_key=timestamp_key, reverse_sort=reverse_sort)
     if insert_trace_indexes:
         log.insert_trace_index_as_event_attribute()
 

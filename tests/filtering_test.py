@@ -1,14 +1,14 @@
 import os
 import unittest
 
-from pm4py.algo.filtering.tracelog.attributes import attributes_filter
-from pm4py.algo.filtering.tracelog.cases import case_filter
-from pm4py.algo.filtering.tracelog.end_activities import end_activities_filter
-from pm4py.algo.filtering.tracelog.paths import paths_filter
-from pm4py.algo.filtering.tracelog.start_activities import start_activities_filter
-from pm4py.algo.filtering.tracelog.variants import variants_filter as variants_module
+from pm4py.algo.filtering.log.attributes import attributes_filter
+from pm4py.algo.filtering.log.cases import case_filter
+from pm4py.algo.filtering.log.end_activities import end_activities_filter
+from pm4py.algo.filtering.log.paths import paths_filter
+from pm4py.algo.filtering.log.start_activities import start_activities_filter
+from pm4py.algo.filtering.log.variants import variants_filter as variants_module
 from pm4py.objects.log.importer.xes import factory as xes_importer
-from pm4py.statistics.traces.tracelog import case_statistics
+from pm4py.statistics.traces.log import case_statistics
 from tests.constants import INPUT_DATA_DIR
 
 
@@ -47,6 +47,14 @@ class LogFilteringTest(unittest.TestCase):
         log2 = attributes_filter.apply(log, ["reject request"], parameters={"positive": True})
         del log1
         del log2
+
+    def test_attribute_selection(self):
+        # to avoid static method warnings in tests,
+        # that by construction of the unittest package have to be expressed in such way
+        self.dummy_variable = "dummy_value"
+        input_log = os.path.join(INPUT_DATA_DIR, "running-example.xes")
+        log = xes_importer.import_log(input_log)
+        attributes_filter.select_attributes_from_log_for_tree(log)
 
     def test_filtering_variants(self):
         # to avoid static method warnings in tests,

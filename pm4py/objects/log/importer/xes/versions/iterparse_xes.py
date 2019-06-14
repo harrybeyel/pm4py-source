@@ -1,10 +1,10 @@
-import ciso8601
 import logging
 
+import ciso8601
 from lxml import etree
 
 from pm4py.objects import log as log_lib
-from pm4py.objects.log.util import compression
+from pm4py.objects.log.util import sorting
 
 # ITERPARSE EVENTS
 EVENT_END = 'end'
@@ -30,8 +30,8 @@ def import_log(filename, parameters=None):
 
     Returns
     -------
-    log : :class:`pm4py.log.log.TraceLog`
-        A trace log
+    log : :class:`pm4py.log.log.EventLog`
+        A log
     """
 
     if parameters is None:
@@ -53,9 +53,6 @@ def import_log(filename, parameters=None):
         insert_trace_indexes = parameters["insert_trace_indexes"]
     if "max_no_traces_to_import" in parameters:
         max_no_traces_to_import = parameters["max_no_traces_to_import"]
-
-    if filename.endswith("gz"):
-        filename = compression.decompress(filename)
 
     context = etree.iterparse(filename, events=['start', 'end'])
 
@@ -122,7 +119,10 @@ def import_log(filename, parameters=None):
             elif elem.tag.endswith(log_lib.util.xes.TAG_BOOLEAN):
                 if parent is not None:
                     try:
-                        val = bool(elem.get(log_lib.util.xes.KEY_VALUE))
+                        val0 = elem.get(log_lib.util.xes.KEY_VALUE)
+                        val = False
+                        if str(val0).lower() == "true":
+                            val = True
                         tree = __parse_attribute(elem, parent, elem.get(log_lib.util.xes.KEY_KEY), val, tree)
                     except ValueError:
                         logging.info("failed to parse boolean: " + str(elem.get(log_lib.util.xes.KEY_VALUE)))
@@ -173,7 +173,7 @@ def import_log(filename, parameters=None):
             elif elem.tag.endswith(log_lib.util.xes.TAG_LOG):
                 if log is not None:
                     raise SyntaxError('file contains > 1 <log> tags')
-                log = log_lib.log.TraceLog()
+                log = log_lib.log.EventLog()
                 tree[elem] = log.attributes
                 continue
 
@@ -204,7 +204,7 @@ def import_log(filename, parameters=None):
     del context
 
     if timestamp_sort:
-        log.sort(timestamp_key=timestamp_key, reverse_sort=reverse_sort)
+        log = sorting.sort_timestamp(log, timestamp_key=timestamp_key, reverse_sort=reverse_sort)
     if insert_trace_indexes:
         log.insert_trace_index_as_event_attribute()
 

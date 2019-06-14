@@ -1,1 +1,2 @@
-from pm4py.visualization import common, dfg, petrinet, process_tree, graphs
+from pm4py.visualization import common, dfg, petrinet, process_tree, graphs, sna, transition_system, heuristics_net, \
+    decisiontree, align_table

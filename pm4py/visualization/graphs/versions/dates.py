@@ -1,3 +1,5 @@
+import matplotlib
+matplotlib.use('Agg')
 from matplotlib import pyplot
 
 from pm4py.visualization.graphs.util import common
@@ -40,7 +42,7 @@ def apply_plot(x, y, parameters=None):
     pyplot.ylabel(DENSITY_LABEL)
     pyplot.title(title)
     pyplot.xticks(rotation=90)
-    pyplot.savefig(filename, bbox_inches="tight")
+    pyplot.savefig(filename, bbox_inches="tight", transparent=True)
     pyplot.clf()
 
     return filename
@@ -79,7 +81,7 @@ def apply_semilogx(x, y, parameters=None):
     pyplot.ylabel(DENSITY_LABEL)
     pyplot.title(title)
     pyplot.xticks(rotation=90)
-    pyplot.savefig(filename, bbox_inches="tight")
+    pyplot.savefig(filename, bbox_inches="tight", transparent=True)
     pyplot.clf()
 
     return filename

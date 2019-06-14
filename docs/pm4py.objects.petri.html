@@ -85,6 +85,7 @@
 <li><a class="reference internal" href="#module-pm4py.objects.petri.incidence_matrix">pm4py.objects.petri.incidence_matrix module</a></li>
 <li><a class="reference internal" href="#module-pm4py.objects.petri.networkx_graph">pm4py.objects.petri.networkx_graph module</a></li>
 <li><a class="reference internal" href="#module-pm4py.objects.petri.petrinet">pm4py.objects.petri.petrinet module</a></li>
+<li><a class="reference internal" href="#module-pm4py.objects.petri.projection">pm4py.objects.petri.projection module</a></li>
 <li><a class="reference internal" href="#module-pm4py.objects.petri.reachability_graph">pm4py.objects.petri.reachability_graph module</a></li>
 <li><a class="reference internal" href="#module-pm4py.objects.petri.semantics">pm4py.objects.petri.semantics module</a></li>
 <li><a class="reference internal" href="#module-pm4py.objects.petri.synchronous_product">pm4py.objects.petri.synchronous_product module</a></li>
@@ -248,7 +249,7 @@
 <dl class="function">
 <dt id="pm4py.objects.petri.check_soundness.check_source_and_sink_reachability">
 <code class="descclassname">pm4py.objects.petri.check_soundness.</code><code class="descname">check_source_and_sink_reachability</code><span class="sig-paren">(</span><em>net</em>, <em>unique_source</em>, <em>unique_sink</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pm4py/objects/petri/check_soundness.html#check_source_and_sink_reachability"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pm4py.objects.petri.check_soundness.check_source_and_sink_reachability" title="Permalink to this definition">¶</a></dt>
-<dd><p>Checks reachability of the source and the sink place from all other nodes (places/transitions)
+<dd><p>Checks reachability of the source and the sink place from all simulation nodes (places/transitions)
 of the Petri net</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -497,6 +498,30 @@ source and the unique sink places that were discovered</p>
 </dd></dl>
 
 </div>
+<div class="section" id="module-pm4py.objects.petri.projection">
+<span id="pm4py-objects-petri-projection-module"></span><h2>pm4py.objects.petri.projection module<a class="headerlink" href="#module-pm4py.objects.petri.projection" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="pm4py.objects.petri.projection.project_net_on_place">
+<code class="descclassname">pm4py.objects.petri.projection.</code><code class="descname">project_net_on_place</code><span class="sig-paren">(</span><em>place</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pm4py/objects/petri/projection.html#project_net_on_place"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pm4py.objects.petri.projection.project_net_on_place" title="Permalink to this definition">¶</a></dt>
+<dd><p>Project a Petri net on a place</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>place</strong> – Place</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li><em>net</em> – (Place) net</li>
+<li><em>im</em> – Empty initial marking</li>
+<li><em>fm</em> – Empty final marking</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
 <div class="section" id="module-pm4py.objects.petri.reachability_graph">
 <span id="pm4py-objects-petri-reachability-graph-module"></span><h2>pm4py.objects.petri.reachability_graph module<a class="headerlink" href="#module-pm4py.objects.petri.reachability_graph" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
@@ -529,7 +554,7 @@ TODO: graphviz do not show labeling for the arcs. Add the labeling.</p>
 <dt id="pm4py.objects.petri.reachability_graph.staterep">
 <code class="descclassname">pm4py.objects.petri.reachability_graph.</code><code class="descname">staterep</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pm4py/objects/petri/reachability_graph.html#staterep"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pm4py.objects.petri.reachability_graph.staterep" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a string representation for a state of a transition system.
-Necessary because graphviz does not support symbols other than alphanimerics and ‘_’.
+Necessary because graphviz does not support symbols simulation than alphanimerics and ‘_’.
 TODO: find a better representation.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -810,6 +835,70 @@ TODO: find a better representation.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="pm4py.objects.petri.utils.get_places_shortest_path">
+<code class="descclassname">pm4py.objects.petri.utils.</code><code class="descname">get_places_shortest_path</code><span class="sig-paren">(</span><em>net</em>, <em>place_to_populate</em>, <em>current_place</em>, <em>places_shortest_path</em>, <em>actual_list</em>, <em>rec_depth</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pm4py/objects/petri/utils.html#get_places_shortest_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pm4py.objects.petri.utils.get_places_shortest_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get shortest path between places lead by hidden transitions</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>net</strong> – Petri net</li>
+<li><strong>place_to_populate</strong> – Place that we are populating the shortest map of</li>
+<li><strong>current_place</strong> – Current visited place (must explore its transitions)</li>
+<li><strong>places_shortest_path</strong> – Current dictionary</li>
+<li><strong>actual_list</strong> – Actual list of transitions to enable</li>
+<li><strong>rec_depth</strong> – Recursion depth</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pm4py.objects.petri.utils.get_places_shortest_path_by_hidden">
+<code class="descclassname">pm4py.objects.petri.utils.</code><code class="descname">get_places_shortest_path_by_hidden</code><span class="sig-paren">(</span><em>net</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pm4py/objects/petri/utils.html#get_places_shortest_path_by_hidden"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pm4py.objects.petri.utils.get_places_shortest_path_by_hidden" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get shortest path between places lead by hidden transitions</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>net</strong> – Petri net</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pm4py.objects.petri.utils.get_s_components_from_petri">
+<code class="descclassname">pm4py.objects.petri.utils.</code><code class="descname">get_s_components_from_petri</code><span class="sig-paren">(</span><em>net</em>, <em>im</em>, <em>fm</em>, <em>rec_depth=0</em>, <em>curr_s_comp=None</em>, <em>visited_places=None</em>, <em>list_s_components=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pm4py/objects/petri/utils.html#get_s_components_from_petri"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pm4py.objects.petri.utils.get_s_components_from_petri" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the S-components from a Petri net</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>net</strong> – Petri net</li>
+<li><strong>im</strong> – Initial marking</li>
+<li><strong>fm</strong> – Final marking</li>
+<li><strong>curr_s_comp</strong> – Current S component</li>
+<li><strong>visited_places</strong> – Visited places</li>
+<li><strong>list_s_components</strong> – List of S-components</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">List of S-components</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">s_components</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="pm4py.objects.petri.utils.get_strongly_connected_subnets">
 <code class="descclassname">pm4py.objects.petri.utils.</code><code class="descname">get_strongly_connected_subnets</code><span class="sig-paren">(</span><em>net</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pm4py/objects/petri/utils.html#get_strongly_connected_subnets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pm4py.objects.petri.utils.get_strongly_connected_subnets" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the strongly connected components subnets in the Petri net</p>
@@ -846,6 +935,25 @@ TODO: find a better representation.</p>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">transition</p>
 </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pm4py.objects.petri.utils.invert_spaths_dictionary">
+<code class="descclassname">pm4py.objects.petri.utils.</code><code class="descname">invert_spaths_dictionary</code><span class="sig-paren">(</span><em>spaths</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pm4py/objects/petri/utils.html#invert_spaths_dictionary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pm4py.objects.petri.utils.invert_spaths_dictionary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Invert the shortest paths (between places) dictionary,
+from target-source to source-target</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>spaths</strong> – Shortest paths dictionary</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Inverted shortest paths dictionary</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">inv_spaths</td>
 </tr>
 </tbody>
 </table>
@@ -894,6 +1002,24 @@ TODO: find a better representation.</p>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">net</p>
 </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pm4py.objects.petri.utils.remove_unconnected_components">
+<code class="descclassname">pm4py.objects.petri.utils.</code><code class="descname">remove_unconnected_components</code><span class="sig-paren">(</span><em>net</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pm4py/objects/petri/utils.html#remove_unconnected_components"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pm4py.objects.petri.utils.remove_unconnected_components" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove unconnected components from a Petri net</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>net</strong> – Petri net</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Cleaned Petri net</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">net</td>
 </tr>
 </tbody>
 </table>
@@ -967,7 +1093,6 @@ replayable on the net.</p>
         <script type="text/javascript" src="_static/jquery.js"></script>
         <script type="text/javascript" src="_static/underscore.js"></script>
         <script type="text/javascript" src="_static/doctools.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
 
   

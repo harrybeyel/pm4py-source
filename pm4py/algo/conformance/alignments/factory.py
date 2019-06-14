@@ -1,14 +1,17 @@
 from copy import copy
 
 import pm4py
+from pm4py import util as pmutil
 from pm4py.algo.conformance import alignments as ali
 from pm4py.algo.conformance.alignments import versions
 from pm4py.algo.conformance.alignments.utils import STD_MODEL_LOG_MOVE_COST
 from pm4py.algo.conformance.alignments.versions.state_equation_a_star import PARAM_MODEL_COST_FUNCTION
 from pm4py.algo.conformance.alignments.versions.state_equation_a_star import PARAM_SYNC_COST_FUNCTION
 from pm4py.algo.conformance.alignments.versions.state_equation_a_star import PARAM_TRACE_COST_FUNCTION
-from pm4py.objects.log import transform as log_transform
+from pm4py.algo.filtering.log.variants import variants_filter as variants_module
+from pm4py.objects.conversion.log import factory as log_converter
 from pm4py.objects.log.util import general as log_util
+from pm4py.objects.log.util import xes as xes_util
 from pm4py.objects.log.util.xes import DEFAULT_NAME_KEY
 from pm4py.util.constants import PARAMETER_CONSTANT_ACTIVITY_KEY
 
@@ -17,31 +20,26 @@ VERSIONS = {VERSION_STATE_EQUATION_A_STAR: versions.state_equation_a_star.apply}
 VERSIONS_COST = {VERSION_STATE_EQUATION_A_STAR: versions.state_equation_a_star.get_best_worst_cost}
 
 
-def apply(objj, petri_net, initial_marking, final_marking, parameters=None, version=VERSION_STATE_EQUATION_A_STAR):
-    if isinstance(objj, pm4py.objects.log.log.Trace):
-        return apply_trace(objj, petri_net, initial_marking, final_marking, parameters, version)
-    elif isinstance(objj, pm4py.objects.log.log.TraceLog):
-        return apply_log(objj, petri_net, initial_marking, final_marking, parameters, version)
-    elif isinstance(objj, pm4py.objects.log.log.EventLog):
-        if log_util.PARAMETER_KEY_CASE_GLUE in parameters:
-            glue = parameters[log_util.PARAMETER_KEY_CASE_GLUE]
-        else:
-            glue = log_util.CASE_ATTRIBUTE_GLUE
-        if log_util.PARAMETER_KEY_CASE_ATTRIBUTE_PRFIX in parameters:
-            case_pref = parameters[log_util.PARAMETER_KEY_CASE_ATTRIBUTE_PRFIX]
-        else:
-            case_pref = log_util.CASE_ATTRIBUTE_PREFIX
-        trace_log = log_transform.transform_event_log_to_trace_log(objj, case_glue=glue,
-                                                                   includes_case_attributes=False,
-                                                                   case_attribute_prefix=case_pref)
-        return apply_log(trace_log, petri_net, initial_marking, final_marking, parameters, version)
+def apply(obj, petri_net, initial_marking, final_marking, parameters=None, version=VERSION_STATE_EQUATION_A_STAR):
+    if parameters is None:
+        parameters = {}
+    if pmutil.constants.PARAMETER_CONSTANT_ACTIVITY_KEY not in parameters:
+        parameters[pmutil.constants.PARAMETER_CONSTANT_ACTIVITY_KEY] = xes_util.DEFAULT_NAME_KEY
+    if pmutil.constants.PARAMETER_CONSTANT_TIMESTAMP_KEY not in parameters:
+        parameters[pmutil.constants.PARAMETER_CONSTANT_TIMESTAMP_KEY] = xes_util.DEFAULT_TIMESTAMP_KEY
+    if pmutil.constants.PARAMETER_CONSTANT_CASEID_KEY not in parameters:
+        parameters[pmutil.constants.PARAMETER_CONSTANT_CASEID_KEY] = log_util.CASE_ATTRIBUTE_GLUE
+    if isinstance(obj, pm4py.objects.log.log.Trace):
+        return apply_trace(obj, petri_net, initial_marking, final_marking, parameters, version)
+    else:
+        return apply_log(log_converter.apply(obj, parameters, log_converter.TO_EVENT_LOG), petri_net, initial_marking,
+                         final_marking, parameters, version)
 
 
 def apply_trace(trace, petri_net, initial_marking, final_marking, parameters=None,
                 version=VERSION_STATE_EQUATION_A_STAR):
     """
     apply alignments to a trace
-
     Parameters
     -----------
     trace
@@ -63,8 +61,6 @@ def apply_trace(trace, petri_net, initial_marking, final_marking, parameters=Non
             mapping of each transition in the model to corresponding model cost
             pm4py.algo.conformance.alignments.versions.state_equation_a_star.PARAM_TRACE_COST_FUNCTION ->
             mapping of each index of the trace to a positive cost value
-
-
     Returns
     -----------
     alignment
@@ -84,7 +80,6 @@ def apply_trace(trace, petri_net, initial_marking, final_marking, parameters=Non
 def apply_log(log, petri_net, initial_marking, final_marking, parameters=None, version=VERSION_STATE_EQUATION_A_STAR):
     """
     apply alignments to a trace
-
     Parameters
     -----------
     log
@@ -107,8 +102,6 @@ def apply_log(log, petri_net, initial_marking, final_marking, parameters=None, v
             mapping of each transition in the model to corresponding model cost
             pm4py.algo.conformance.alignments.versions.state_equation_a_star.PARAM_TRACE_COST_FUNCTION ->
             mapping of each index of the trace to a positive cost value
-
-
     Returns
     -----------
     alignment
@@ -136,23 +129,38 @@ def apply_log(log, petri_net, initial_marking, final_marking, parameters=None, v
             else:
                 model_cost_function[t] = 1
 
-    best_worst_cost = VERSIONS_COST[version](petri_net, initial_marking, final_marking)
-
     parameters[pm4py.util.constants.PARAMETER_CONSTANT_ACTIVITY_KEY] = activity_key
     parameters[
         PARAM_MODEL_COST_FUNCTION] = model_cost_function
     parameters[
         PARAM_SYNC_COST_FUNCTION] = sync_cost_function
-    alignments = list(map(
+    best_worst_cost = VERSIONS_COST[version](petri_net, initial_marking, final_marking, parameters=parameters)
+
+    variants = variants_module.get_variants_from_log_trace_idx(log, parameters=parameters)
+    one_tr_per_var = []
+    for index_variant, variant in enumerate(variants):
+        one_tr_per_var.append(log[variants[variant][0]])
+    all_alignments = list(map(
         lambda trace: apply_trace(trace, petri_net, initial_marking, final_marking, parameters=copy(parameters),
-                                  version=version),
-        log))
+                                  version=version), one_tr_per_var))
+
+    al_idx = {}
+    for index_variant, variant in enumerate(variants):
+        for trace_idx in variants[variant]:
+            al_idx[trace_idx] = all_alignments[index_variant]
+
+    alignments = []
+    for i in range(len(log)):
+        alignments.append(al_idx[i])
 
     # assign fitness to traces
     for index, align in enumerate(alignments):
-        # align_cost = align['cost'] // ali.utils.STD_MODEL_LOG_MOVE_COST
-        # align['fitness'] = 1 - ((align['cost']  // ali.utils.STD_MODEL_LOG_MOVE_COST) / best_worst_cost)
-        align['fitness'] = 1 - (
-                (align['cost'] // ali.utils.STD_MODEL_LOG_MOVE_COST) / (len(log[index]) + best_worst_cost))
-
+        unfitness_upper_part = align['cost'] // ali.utils.STD_MODEL_LOG_MOVE_COST
+        if unfitness_upper_part == 0:
+            align['fitness'] = 1
+        elif (len(log[index]) + best_worst_cost) > 0:
+            align['fitness'] = 1 - (
+                    (align['cost'] // ali.utils.STD_MODEL_LOG_MOVE_COST) / (len(log[index]) + best_worst_cost))
+        else:
+            align['fitness'] = 0
     return alignments

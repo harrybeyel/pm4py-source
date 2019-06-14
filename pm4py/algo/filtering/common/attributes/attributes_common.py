@@ -1,9 +1,10 @@
 import json
-from datetime import datetime
 
 import numpy as np
 import pandas as pd
 from scipy.stats import gaussian_kde
+
+from pm4py.util.points_subset import pick_chosen_points_list
 
 
 def get_sorted_attributes_list(attributes):
@@ -86,8 +87,8 @@ def get_kde_numeric_attribute(values, parameters=None):
     values = sorted(values)
     density = gaussian_kde(values)
 
-    xs1 = list(np.linspace(min(values), max(values), graph_points/2))
-    xs2 = list(np.geomspace(max(min(values), 0.000001), max(values), graph_points/2))
+    xs1 = list(np.linspace(min(values), max(values), graph_points / 2))
+    xs2 = list(np.geomspace(max(min(values), 0.000001), max(values), graph_points / 2))
     xs = sorted(xs1 + xs2)
 
     return [xs, list(density(xs))]
@@ -144,9 +145,11 @@ def get_kde_date_attribute(values, parameters=None):
         parameters = {}
 
     graph_points = parameters["graph_points"] if "graph_points" in parameters else 200
-    int_values = sorted([(x - datetime(1970, 1, 1)).total_seconds() for x in values])
+    points_to_sample = parameters["points_to_sample"] if "points_to_sample" in parameters else 400
+    red_values = pick_chosen_points_list(points_to_sample, values)
+    int_values = sorted(
+        [x.replace(tzinfo=None).timestamp() for x in red_values])
     density = gaussian_kde(int_values)
-
     xs = np.linspace(min(int_values), max(int_values), graph_points)
     xs_transf = pd.to_datetime(xs * 10 ** 9)
 
@@ -175,6 +178,6 @@ def get_kde_date_attribute_json(values, parameters=None):
 
     ret = []
     for i in range(len(x)):
-        ret.append(((x[i] - datetime(1970, 1, 1)).total_seconds(), y[i]))
+        ret.append((x[i].replace(tzinfo=None).timestamp(), y[i]))
 
     return json.dumps(ret)
